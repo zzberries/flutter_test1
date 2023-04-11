@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 void main() {
   runApp(const MyApp());
 }
@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -48,15 +49,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   int _counter = 0;
   String _str = "";
 
   // Initial Selected Value
-  String dropdownvalue = 'Item 1';
+  String dropdownvalue = 'N/A';
 
   // List of items in our dropdown menu
   var items = [
-    'Item 1',
+    'N/A',
     'Item 2',
     'Item 3',
     'Item 4',
@@ -99,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -108,10 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = const GeneratorPage();
         break;
       case 1:
-        page = FavoritesPage();
+        page = OpeningPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -175,6 +178,7 @@ class FavoritesPage extends StatefulWidget {
   State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
+
 class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
@@ -182,73 +186,75 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
     IconData icon;
     icon = Icons.arrow_drop_down;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Enter any and all information you know about your appointment.'),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
+
+    return Material(
+
+      child: Center(
+
+
+        child: Expanded(
+          child: Column(
+
+
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Container(
-                  width:150,
-                  child: Column(
-                    children: [
-                      Text('What is your doctors first name'),
-                      CustomDropdownButton(
-                        items: ['Item 1', 'Item 2', 'Item 3'],
-                        selectedItem: 'Item 1',
-                        onChanged: (String newValue) {
-                          // Do something when the user selects an item
-                        },
+              Text('Please enter any and all information you know about your appointment.',
+                  style: TextStyle(
+                    fontSize: 16, // set the font size to 16
+                  )
+              ),
+              SizedBox(height: 10),
+              Row(
+
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      width:550,
+                      child: Column(
+                        children: [
+                          Text('What is your doctors first name',
+                              style: TextStyle(
+                                fontSize: 16, // set the font size to 16
+                              )
+                          ),
+
+                        ],
                       ),
-                    ],
+                      //Space for stuff
+
+                    ),
+                  )
+                  ,Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      width:250,
+                      child: Column(
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(24),
+                    child: ElevatedButton(
+                      child: const Text('Back'),
+                      onPressed: () {
+                        Navigator.pop(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const GeneratorPage()),
+                        );
+                      },
+                    ),
+
 
                   ),
-                ),
-              )
-              ,Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Container(
-                  width:100,
-                  child: Column(
 
-                    children: [
-                      Text('What building are going to?'),
-                      CustomDropdownButton(
-                        items: ['Item 1', 'Item 2', 'Item 3'],
-                        selectedItem: 'Item 1',
-                        onChanged: (String newValue) {
-                          // Do something when the user selects an item
-                        },
-                      )
-
-                    ],
-                  ),
-                ),
+                ],
               ),
-              Container(
-                margin: EdgeInsets.all(24),
-                child: ElevatedButton(
-                  child: const Text('Next'),
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const GeneratorPage()),
-                    );
-                  },
-                ),
-
-
-              ),
-
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -262,6 +268,8 @@ class GeneratorPage extends StatefulWidget {
 
 class _GeneratorPageState extends State<GeneratorPage> {
   int _counter = 0;
+  TextEditingController _textFieldController = TextEditingController();
+  bool _isTextFieldFilled = false;
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -277,134 +285,192 @@ class _GeneratorPageState extends State<GeneratorPage> {
   Widget build(BuildContext context) {
     IconData icon;
     icon = Icons.arrow_drop_down;
-    return Center(
-      // Center is a layout widget. It takes a single child and positions it
-      // in the middle of the parent.
 
-      child: Column(
-        // Column is also a layout widget. It takes a list of children and
-        // arranges them vertically. By default, it sizes itself to fit its
-        // children horizontally, and tries to be as tall as its parent.
-        //
-        // Invoke "debug painting" (press "p" in the console, choose the
-        // "Toggle Debug Paint" action from the Flutter Inspector in Android
-        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-        // to see the wireframe for each widget.
-        //
-        // Column has various properties to control how it sizes itself and
-        // how it positions its children. Here we use mainAxisAlignment to
-        // center the children vertically; the main axis here is the vertical
-        // axis because Columns are vertical (the cross axis would be
-        // horizontal).
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'Enter any information you know about your appointment',
-          ),
+    return Material(
 
-          Container(
-            margin: EdgeInsets.all(24),
-            padding: EdgeInsets.all(12),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Reason for appointment',
-              ),
+      child: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
 
-            ),
-            decoration: BoxDecoration(color: Colors.white),
-          ),
-
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              //Icon(Icons.star, color: Colors.green[500]),
-              //Icon(Icons.star, color: Colors.green[500]),
-              // Icon(Icons.star, color: Colors.green[500]),
-              //const Icon(Icons.star, color: Colors.black),
-              // const Icon(Icons.star, color: Colors.black),
-
-              Container(
-                  margin: EdgeInsets.all(24),
-                  padding: EdgeInsets.all(5),
-
-                  width: 90,
-                  child: CustomDropdownButton(
-                    items: ['Item 1', 'Item 2', 'Item 3'],
-                    selectedItem: 'Item 1',
-                    onChanged: (String newValue) {
-                      // Do something when the user selects an item
-                    },
-
-                  )
-
-
+        child: Expanded(
+          child: Column(
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Enter any information you know about your appointment',
               ),
               Container(
-                  margin: EdgeInsets.all(24),
-                  padding: EdgeInsets.all(5),
 
-                  width: 90,
-                  child: CustomDropdownButton(
-                    items: ['Item 1', 'Item 2', 'Item 3'],
-                    selectedItem: 'Item 1',
-                    onChanged: (String newValue) {
-                      // Do something when the user selects an item
-                    },
-
-                  )
-
-
-              ),
-              Container(
                 margin: EdgeInsets.all(24),
-                padding: EdgeInsets.all(5),
-
-                width: 90,
-                child: CustomDropdownButton(
-                  items: ['Item 1', 'Item 2', 'Item 3'],
-                  selectedItem: 'Item 1',
-                  onChanged: (String newValue) {
-                    // Do something when the user selects an item
+                padding: EdgeInsets.all(12),
+                child:TextField(
+                  controller: _textFieldController,
+                  onChanged: (text) {
+                    setState(() {
+                      _isTextFieldFilled = text.isNotEmpty;
+                    });
                   },
+                  decoration: InputDecoration(
+                    hintText: 'Enter some text',
+                  ),
                 ),
-                //decoration: BoxDecoration(color: Colors.white),
-
-              ),
-              Container(
-                margin: EdgeInsets.all(24),
-                padding: EdgeInsets.all(5),
-
-                width: 90,
-                child: CustomDropdownButton(
-                  items: ['Item 1', 'Item 2', 'Item 3'],
-                  selectedItem: 'Item 1',
-                  onChanged: (String newValue) {
-                    // Do something when the user selects an item
-                  },
-                ),
-                // decoration: BoxDecoration(color: Colors.white),
-
+                decoration: BoxDecoration(color: Colors.white),
               ),
 
-              Container(
-                margin: EdgeInsets.all(24),
-                child: ElevatedButton(
-                  child: const Text('Next'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const FavoritesPage()),
-                    );
-                  },
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //Icon(Icons.star, color: Colors.green[500]),
+                  //Icon(Icons.star, color: Colors.green[500]),
+                  // Icon(Icons.star, color: Colors.green[500]),
+                  //const Icon(Icons.star, color: Colors.black),
+                  // const Icon(Icons.star, color: Colors.black),
+
+                  Container(
+                    margin: EdgeInsets.all(24),
+                    padding: EdgeInsets.all(5),
+
+                    width: 200,
+                    child: Column(
+                      children: [
+                        Text('What is your doctors first name?', textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16, // set the font size to 16
+                            )
+                        ),
+                        CustomDropdownButton(
+                          items: ['N/A', 'Item 2', 'Item 3'],
+                          selectedItem: 'N/A',
+                          onChanged: (String newValue) {
+                            if (newValue!= 'N/A') {
+                              setState(() {
+                                _isTextFieldFilled = true;
+                              });
+                            }
+                            if (newValue== 'N/A') {
+                              setState(() {
+                                _isTextFieldFilled = false;
+                              });
+
+                            }
+                          },
+
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(24),
+                    padding: EdgeInsets.all(5),
+
+                    width: 200,
+                    child: Column(
+                      children: [
+                        Text('What department are you going to?', textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16, // set the font size to 16
+                            )
+                        ),
+                        CustomDropdownButton(
+                          items: ['N/A', 'Item 2', 'Item 3'],
+                          selectedItem: 'N/A',
+                          onChanged: (String newValue) {
+                            if (newValue!= 'N/A') {
+                              setState(() {
+                                _isTextFieldFilled = true;
+                              });
+                            }
+                            if (newValue== 'N/A') {
+                              setState(() {
+                                _isTextFieldFilled = false;
+                              });
+
+                            }
+                          },
+                        ),
 
 
+                      ],
+
+                    ),
+
+                  ),
+
+
+                  Container(
+                    margin: EdgeInsets.all(24),
+                    padding: EdgeInsets.all(5),
+
+                    width: 200,
+                    child: Column(
+                      children: [
+                        Text('What building are you going to?', textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16, // set the font size to 16
+                            )
+                        ),
+                        CustomDropdownButton(
+                          items: ['N/A', 'Item 2', 'Item 3'],
+                          selectedItem: 'N/A',
+                          onChanged: (String newValue) {
+                            if (newValue!= 'N/A') {
+                              setState(() {
+                                _isTextFieldFilled = true;
+                              });
+                            }
+                            if (newValue== 'N/A') {
+                              setState(() {
+                                _isTextFieldFilled = false;
+                              });
+
+                            }
+                          },
+
+                        ),
+                      ],
+                    ),
+                    //decoration: BoxDecoration(color: Colors.white),
+
+                  ),
+
+
+                  Container(
+                    margin: EdgeInsets.all(24),
+                    child: ElevatedButton(
+                      child: const Text('Next'),
+                      onPressed: _isTextFieldFilled ?() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const FavoritesPage()),
+                        );
+                      }
+                          :null,
+                    ),
+
+
+                  ),
+
+
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
 
@@ -413,6 +479,27 @@ class _GeneratorPageState extends State<GeneratorPage> {
   }
 }
 
+class OpeningPage extends StatefulWidget {
+  const OpeningPage({super.key});
+  @override
+  _OpeningPageState createState() => _OpeningPageState();
+}
+
+class _OpeningPageState extends State<OpeningPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('You have no annoucements!'),
+      ),
+    );
+  }
+}
 
 
 class CustomDropdownButton extends StatefulWidget {
@@ -441,20 +528,24 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: _selectedItem,
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedItem = newValue;
-          widget.onChanged(newValue!);
-        });
-      },
-      items: widget.items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
+    return Material(
+      child: DropdownButton<String>(
+        value: _selectedItem,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedItem = newValue;
+            widget.onChanged(newValue!);
+          });
+        },
+
+        items: widget.items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item),
+          );
+        }).toList(),
+      ),
     );
   }
 }
+
