@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
+
 import 'dart:async';
+
+import 'package:latlong2/latlong.dart';
+import "package:http/http.dart" as http;
+import "dart:convert" as convert;
+
+import 'package:latlong2/latlong.dart' as latlong2;
+
 void main() {
   runApp(const MyApp());
 }
+
+String building = "";
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,7 +22,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -49,7 +60,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int _counter = 0;
   String _str = "";
 
@@ -99,9 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   */
   var selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -119,56 +129,49 @@ class _MyHomePageState extends State<MyHomePage> {
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
-    return LayoutBuilder(
-        builder: (context,constraints) {
-          return Scaffold(
-            appBar: AppBar(
-              // Here we take the value from the MyHomePage object that was created by
-              // the App.build method, and use it to set our appbar title.
-              title: Text(widget.title),
-            ),
-            body: Row(
-              children: [
-                SafeArea(
-                  child: NavigationRail(
-                    extended: constraints.maxWidth >=600,
-                    destinations: [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home),
-                        label: Text('Home'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.announcement),
-                        label: Text('Announcements'),
-                      ),
-                    ],
-                    selectedIndex: selectedIndex,
-                    onDestinationSelected: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    },
+    return LayoutBuilder(builder: (context, constraints) {
+      return Scaffold(
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        body: Row(
+          children: [
+            SafeArea(
+              child: NavigationRail(
+                extended: constraints.maxWidth >= 600,
+                destinations: [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text('Home'),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    child: page,
+                  NavigationRailDestination(
+                    icon: Icon(Icons.announcement),
+                    label: Text('Announcements'),
                   ),
-                ),
-              ],
+                ],
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (value) {
+                  setState(() {
+                    selectedIndex = value;
+                  });
+                },
+              ),
             ),
-          );
-        }
-    );
+            Expanded(
+              child: Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: page,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
-
-
-
-
 // This trailing comma makes auto-formatting nicer for build methods.
-
 }
 
 class FavoritesPage extends StatefulWidget {
@@ -178,90 +181,88 @@ class FavoritesPage extends StatefulWidget {
   State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
-
 class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
+    //Future<Position> futurePose = getLatLng();
+    // Position pos = await futurePose ;
+    double lat = 42.27507; // south road parking garage
+    double lng = -71.76205;
+    if (building == "ACC") {
+      lat = 42.27514;
+      lng = -71.76259;
+    } else if (building == "Aaron Lazare") {
+      lat = 42.27656;
+      lng = -71.76399;
+    } else if (building == "Medical School") {
+      lat = 42.27756;
+      lng = -71.7617;
+    }
+    //lat = pos?.latitude;
+    // double? lng  = pos?.latitude;
+    //print(lat.toString()+", "+lng.toString());
+    final coordinates = [LatLng(42.27748, -71.7642), LatLng(lat, lng)];
+    final coordinatesTarget = [LatLng(42.27748, -71.7642), LatLng(lat, lng)];
 
+    final bounds = LatLngBounds.fromPoints(coordinates
+        .map((location) =>
+            latlong2.LatLng(location.latitude, location.longitude))
+        .toList());
+    const padding = 50.0;
 
-    IconData icon;
-    icon = Icons.arrow_drop_down;
-
-    return Material(
-
-      child: Center(
-
-
-        child: Expanded(
-          child: Column(
-
-
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Please enter any and all information you know about your appointment.',
-                  style: TextStyle(
-                    fontSize: 16, // set the font size to 16
-                  )
-              ),
-              SizedBox(height: 10),
-              Row(
-
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Container(
-                      width:550,
-                      child: Column(
-                        children: [
-                          Text('What is your doctors first name',
-                              style: TextStyle(
-                                fontSize: 16, // set the font size to 16
-                              )
-                          ),
-
-                        ],
-                      ),
-                      //Space for stuff
-
-                    ),
-                  )
-                  ,Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Container(
-                      width:250,
-                      child: Column(
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(24),
-                    child: ElevatedButton(
-                      child: const Text('Back'),
-                      onPressed: () {
-                        Navigator.pop(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const GeneratorPage()),
-                        );
-                      },
-                    ),
-
-
-                  ),
-
-                ],
-              ),
-            ],
+    return Scaffold(
+      body: FlutterMap(
+        options: MapOptions(
+          bounds: bounds,
+          boundsOptions: FitBoundsOptions(
+            padding: EdgeInsets.only(
+              left: padding,
+              top: padding + MediaQuery.of(context).padding.top,
+              right: padding,
+              bottom: padding,
+            ),
           ),
         ),
+        nonRotatedChildren: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          ),
+          MarkerLayer(
+              markers: coordinates.map((location) {
+            return Marker(
+                point: latlong2.LatLng(location.latitude, location.longitude),
+                width: 35,
+                height: 35,
+                builder: (context) => const Icon(
+                      Icons.location_pin,
+                    ),
+                anchorPos: AnchorPos.align(AnchorAlign.top));
+          }).toList()),
+          // DirectionsLayer(
+          //      coordinates: coordinates,
+          //      color: Colors.blue,
+          //    ),
+        ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        hoverColor: Colors.purple,
+        backgroundColor: Colors.blue,
+        onPressed: () {
+          Navigator.pop(
+            context,
+            MaterialPageRoute(builder: (context) => const GeneratorPage()),
+          );
+        },
+        label: Text('Back'),
+      ),
+
     );
   }
 }
 
 class GeneratorPage extends StatefulWidget {
   const GeneratorPage({super.key});
+
   @override
   State<GeneratorPage> createState() => _GeneratorPageState();
 }
@@ -270,6 +271,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
   int _counter = 0;
   TextEditingController _textFieldController = TextEditingController();
   bool _isTextFieldFilled = false;
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -278,16 +280,15 @@ class _GeneratorPageState extends State<GeneratorPage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-
     });
   }
+
   @override
   Widget build(BuildContext context) {
     IconData icon;
     icon = Icons.arrow_drop_down;
 
     return Material(
-
       child: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -314,10 +315,9 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 'Enter any information you know about your appointment',
               ),
               Container(
-
                 margin: EdgeInsets.all(24),
                 padding: EdgeInsets.all(12),
-                child:TextField(
+                child: TextField(
                   controller: _textFieldController,
                   onChanged: (text) {
                     setState(() {
@@ -330,7 +330,6 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 ),
                 decoration: BoxDecoration(color: Colors.white),
               ),
-
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -343,32 +342,29 @@ class _GeneratorPageState extends State<GeneratorPage> {
                   Container(
                     margin: EdgeInsets.all(24),
                     padding: EdgeInsets.all(5),
-
                     width: 200,
                     child: Column(
                       children: [
-                        Text('What is your doctors first name?', textAlign: TextAlign.center,
+                        Text('What is your doctors first name?',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16, // set the font size to 16
-                            )
-                        ),
+                            )),
                         CustomDropdownButton(
                           items: ['N/A', 'Item 2', 'Item 3'],
                           selectedItem: 'N/A',
                           onChanged: (String newValue) {
-                            if (newValue!= 'N/A') {
+                            if (newValue != 'N/A') {
                               setState(() {
                                 _isTextFieldFilled = true;
                               });
                             }
-                            if (newValue== 'N/A') {
+                            if (newValue == 'N/A') {
                               setState(() {
                                 _isTextFieldFilled = false;
                               });
-
                             }
                           },
-
                         ),
                       ],
                     ),
@@ -376,40 +372,33 @@ class _GeneratorPageState extends State<GeneratorPage> {
                   Container(
                     margin: EdgeInsets.all(24),
                     padding: EdgeInsets.all(5),
-
                     width: 200,
                     child: Column(
                       children: [
-                        Text('What department are you going to?', textAlign: TextAlign.center,
+                        Text('What department are you going to?',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16, // set the font size to 16
-                            )
-                        ),
+                            )),
                         CustomDropdownButton(
                           items: ['N/A', 'Item 2', 'Item 3'],
                           selectedItem: 'N/A',
                           onChanged: (String newValue) {
-                            if (newValue!= 'N/A') {
+                            if (newValue != 'N/A') {
                               setState(() {
                                 _isTextFieldFilled = true;
                               });
                             }
-                            if (newValue== 'N/A') {
+                            if (newValue == 'N/A') {
                               setState(() {
                                 _isTextFieldFilled = false;
                               });
-
                             }
                           },
                         ),
-
-
                       ],
-
                     ),
-
                   ),
-
 
                   Container(
                     margin: EdgeInsets.all(24),
@@ -418,54 +407,54 @@ class _GeneratorPageState extends State<GeneratorPage> {
                     width: 200,
                     child: Column(
                       children: [
-                        Text('What building are you going to?', textAlign: TextAlign.center,
+                        Text('What building are you going to?',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16, // set the font size to 16
-                            )
-                        ),
+                            )),
                         CustomDropdownButton(
-                          items: ['N/A', 'Item 2', 'Item 3'],
+                          items: [
+                            'N/A',
+                            'ACC',
+                            'Aaron Lazare',
+                            'Medical School'
+                          ],
                           selectedItem: 'N/A',
                           onChanged: (String newValue) {
-                            if (newValue!= 'N/A') {
+                            building = newValue;
+                            if (newValue != 'N/A') {
                               setState(() {
                                 _isTextFieldFilled = true;
                               });
                             }
-                            if (newValue== 'N/A') {
+                            if (newValue == 'N/A') {
                               setState(() {
                                 _isTextFieldFilled = false;
                               });
-
                             }
                           },
-
                         ),
                       ],
                     ),
                     //decoration: BoxDecoration(color: Colors.white),
-
                   ),
-
 
                   Container(
                     margin: EdgeInsets.all(24),
                     child: ElevatedButton(
                       child: const Text('Next'),
-                      onPressed: _isTextFieldFilled ?() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const FavoritesPage()),
-                        );
-                      }
-                          :null,
+                      onPressed: _isTextFieldFilled
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const FavoritesPage()),
+                              );
+                            }
+                          : null,
                     ),
-
-
                   ),
-
-
                 ],
               ),
             ],
@@ -473,14 +462,12 @@ class _GeneratorPageState extends State<GeneratorPage> {
         ),
       ),
     );
-
-
-
   }
 }
 
 class OpeningPage extends StatefulWidget {
   const OpeningPage({super.key});
+
   @override
   _OpeningPageState createState() => _OpeningPageState();
 }
@@ -500,7 +487,6 @@ class _OpeningPageState extends State<OpeningPage> {
     );
   }
 }
-
 
 class CustomDropdownButton extends StatefulWidget {
   final List<String> items;
@@ -537,7 +523,6 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             widget.onChanged(newValue!);
           });
         },
-
         items: widget.items.map((String item) {
           return DropdownMenuItem<String>(
             value: item,
@@ -548,4 +533,3 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
     );
   }
 }
-
