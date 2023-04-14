@@ -9,6 +9,7 @@ import "package:http/http.dart" as http;
 import "dart:convert" as convert;
 
 import 'package:latlong2/latlong.dart' as latlong2;
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -174,6 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
 // This trailing comma makes auto-formatting nicer for build methods.
 }
 
+
+
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
 
@@ -186,6 +189,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     //Future<Position> futurePose = getLatLng();
     // Position pos = await futurePose ;
+    String buildingName = building;
     double lat = 42.27507; // south road parking garage
     double lng = -71.76205;
     if (building == "ACC") {
@@ -211,6 +215,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
     const padding = 50.0;
 
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title:  Text('You\'re at the First Road Parking Garage.\nHead to '+buildingName),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
       body: FlutterMap(
         options: MapOptions(
           bounds: bounds,
@@ -233,6 +243,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 point: latlong2.LatLng(location.latitude, location.longitude),
                 width: 35,
                 height: 35,
+
                 builder: (context) => const Icon(
                       Icons.location_pin,
                     ),
