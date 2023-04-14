@@ -341,7 +341,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 ),
                 decoration: BoxDecoration(color: Colors.white),
               ),
-              Row(
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   //Icon(Icons.star, color: Colors.green[500]),
