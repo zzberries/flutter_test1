@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'dart:async';
 
@@ -11,8 +14,24 @@ import "dart:convert" as convert;
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:flutter/widgets.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
+  final docRef = db.collection("dcotors").doc("doctor1");
+  docRef.get().then(
+        (DocumentSnapshot doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      print(data);
+    },
+    onError: (e) => print("Error getting document: $e"),
+  );
+
 }
 
 String building = "";

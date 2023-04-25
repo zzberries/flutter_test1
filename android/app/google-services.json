@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "571016803264",
+    "project_id": "apps-for-good---umass-nav",
+    "storage_bucket": "apps-for-good---umass-nav.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571016803264:android:d699e5739c8974627f4e25",
+        "android_client_info": {
+          "package_name": "com.example.apps_for_good"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571016803264-v1fqernpetqun9ufim41sa1i0rkokgdf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4owxvxon5sq094dQtNbRJX16s_EoXOPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571016803264-v1fqernpetqun9ufim41sa1i0rkokgdf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "571016803264-dehlgdi36jjk4rp51755djp28gje87dm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterWorkspace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571016803264:android:62befc9431dcda6d7f4e25",
+        "android_client_info": {
+          "package_name": "com.example.flutter_workspace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571016803264-v1fqernpetqun9ufim41sa1i0rkokgdf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4owxvxon5sq094dQtNbRJX16s_EoXOPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571016803264-v1fqernpetqun9ufim41sa1i0rkokgdf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "571016803264-dehlgdi36jjk4rp51755djp28gje87dm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterWorkspace"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
