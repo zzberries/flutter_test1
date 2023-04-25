@@ -37,6 +37,7 @@ void main() async {
 
 String building = "";
 
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -195,8 +196,6 @@ class _MyHomePageState extends State<MyHomePage> {
 // This trailing comma makes auto-formatting nicer for build methods.
 }
 
-
-
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
 
@@ -237,44 +236,67 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title:  Text('You\'re at the First Road Parking Garage.\nHead to '+buildingName),
+        title: Text('You\'re at the First Road Parking Garage.\nHead to ' +
+            buildingName),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
-      body: FlutterMap(
-        options: MapOptions(
-          bounds: bounds,
-          boundsOptions: FitBoundsOptions(
-            padding: EdgeInsets.only(
-              left: padding,
-              top: padding + MediaQuery.of(context).padding.top,
-              right: padding,
-              bottom: padding,
-            ),
-          ),
-        ),
-        nonRotatedChildren: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          ),
-          MarkerLayer(
-              markers: coordinates.map((location) {
-            return Marker(
-                point: latlong2.LatLng(location.latitude, location.longitude),
-                width: 35,
-                height: 35,
-
-                builder: (context) => const Icon(
-                      Icons.location_pin,
+      body: Container(
+          width: double.maxFinite,
+          height: double.maxFinite,
+          color: Colors.black,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Container(
+              constraints: BoxConstraints(maxHeight: 600, maxWidth: 800),
+              child: FlutterMap(
+                options: MapOptions(
+                  bounds: bounds,
+                  boundsOptions: FitBoundsOptions(
+                    padding: EdgeInsets.only(
+                      left: padding,
+                      top: padding + MediaQuery.of(context).padding.top,
+                      right: padding,
+                      bottom: padding,
                     ),
-                anchorPos: AnchorPos.align(AnchorAlign.top));
-          }).toList()),
-          // DirectionsLayer(
-          //      coordinates: coordinates,
-          //      color: Colors.blue,
-          //    ),
-        ],
-      ),
+                  ),
+                ),
+                nonRotatedChildren: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  ),
+                  MarkerLayer(
+                      markers: coordinates.map((location) {
+                    return Marker(
+                        point: latlong2.LatLng(
+                            location.latitude, location.longitude),
+                        width: 35,
+                        height: 35,
+                        builder: (context) => const Icon(
+                              Icons.location_pin,
+                            ),
+                        anchorPos: AnchorPos.align(AnchorAlign.top));
+                  }).toList()),
+                  // DirectionsLayer(
+                  //      coordinates: coordinates,
+                  //      color: Colors.blue,
+                  //    ),
+                ],
+              ),
+            ),
+            Container(
+              width: 50,
+            ),
+            Container(
+              constraints: BoxConstraints(maxHeight: 600, maxWidth: 600),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/UMass_Img.webp'),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            )
+          ])),
       floatingActionButton: FloatingActionButton.extended(
         hoverColor: Colors.purple,
         backgroundColor: Colors.blue,
@@ -286,7 +308,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
         },
         label: Text('Back'),
       ),
-
     );
   }
 }
