@@ -88,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Initial Selected Value
   String dropdownvalue = 'N/A';
 
+
   // List of items in our dropdown menu
   var items = [
     'N/A',
@@ -131,6 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   */
   var selectedIndex = 0;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -204,6 +207,13 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
+  bool _isImageVisible = false;
+
+  void _toggleImageVisibility() {
+    setState(() {
+      _isImageVisible = !_isImageVisible;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     //Future<Position> futurePose = getLatLng();
@@ -245,9 +255,30 @@ class _FavoritesPageState extends State<FavoritesPage> {
           width: double.maxFinite,
           height: double.maxFinite,
           color: Colors.black,
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(
-              constraints: BoxConstraints(maxHeight: 600, maxWidth: 800),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ElevatedButton(
+              onPressed: () => _toggleImageVisibility(),
+              child: Text('Show/Hide Image'),
+            ),
+            if (_isImageVisible)
+              GestureDetector(
+                onTap: () => _toggleImageVisibility(),
+                child: Container(
+                  width: 400,
+                  height: 400,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        'assets/UMass_Img.webp',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            if(!_isImageVisible)
+              Container(
+              constraints: BoxConstraints(maxHeight: 400),
               child: FlutterMap(
                 options: MapOptions(
                   bounds: bounds,
@@ -287,15 +318,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             Container(
               width: 50,
             ),
-            Container(
-              constraints: BoxConstraints(maxHeight: 600, maxWidth: 600),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/UMass_Img.webp'),
-                  fit: BoxFit.fill,
-                ),
-              ),
-            )
+
           ])),
       floatingActionButton: FloatingActionButton.extended(
         hoverColor: Colors.purple,
