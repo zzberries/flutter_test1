@@ -17,24 +17,14 @@ import 'package:flutter/widgets.dart';
 import 'map-page.dart';
 
 
-
 void main() async {
-  runApp(const MyApp());
 
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(const MyApp());
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
-
-  final docRef = db.collection("dcotors").doc("doctor1");
-  docRef.get().then(
-    (DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      print(data);
-    },
-    onError: (e) => print("Error getting document: $e"),
-  );
 }
 
 String building = "";
@@ -129,7 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return menuItems;
   }
-
   */
   var selectedIndex = 0;
 
@@ -144,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = const GeneratorPage();
+        page = SearchPage();
         break;
       case 1:
         page = OpeningPage();
@@ -184,7 +173,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Expanded(
               child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: Theme
+                    .of(context)
+                    .colorScheme
+                    .primaryContainer,
                 child: page,
               ),
             ),
@@ -197,277 +189,303 @@ class _MyHomePageState extends State<MyHomePage> {
 // This trailing comma makes auto-formatting nicer for build methods.
 }
 
-class GeneratorPage extends StatefulWidget {
-  const GeneratorPage({super.key});
-
-  @override
-  State<GeneratorPage> createState() => _GeneratorPageState();
-}
-
-class _GeneratorPageState extends State<GeneratorPage> {
-  int _counter = 0;
-  TextEditingController _textFieldController = TextEditingController();
-  bool _isTextFieldFilled = false;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    IconData icon;
-    icon = Icons.arrow_drop_down;
-
-    return Material(
-      child: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-
-        child: Expanded(
-          child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'Enter any information you know about your appointment',
-              ),
-              Container(
-                margin: EdgeInsets.all(24),
-                padding: EdgeInsets.all(12),
-                child: TextField(
-                  controller: _textFieldController,
-                  onChanged: (text) {
-                    setState(() {
-                      _isTextFieldFilled = text.isNotEmpty;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Enter some text',
-                  ),
-                ),
-                decoration: BoxDecoration(color: Colors.white),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  //Icon(Icons.star, color: Colors.green[500]),
-                  //Icon(Icons.star, color: Colors.green[500]),
-                  // Icon(Icons.star, color: Colors.green[500]),
-                  //const Icon(Icons.star, color: Colors.black),
-                  // const Icon(Icons.star, color: Colors.black),
-
-                  Container(
-                    margin: EdgeInsets.all(24),
-                    padding: EdgeInsets.all(5),
-                    width: 200,
-                    child: Column(
-                      children: [
-                        Text('What is your doctors first name?',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16, // set the font size to 16
-                            )),
-                        CustomDropdownButton(
-                          items: ['N/A', 'Item 2', 'Item 3'],
-                          selectedItem: 'N/A',
-                          onChanged: (String newValue) {
-                            if (newValue != 'N/A') {
-                              setState(() {
-                                _isTextFieldFilled = true;
-                              });
-                            }
-                            if (newValue == 'N/A') {
-                              setState(() {
-                                _isTextFieldFilled = false;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.all(24),
-                    padding: EdgeInsets.all(5),
-                    width: 200,
-                    child: Column(
-                      children: [
-                        Text('What department are you going to?',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16, // set the font size to 16
-                            )),
-                        CustomDropdownButton(
-                          items: ['N/A', 'Item 2', 'Item 3'],
-                          selectedItem: 'N/A',
-                          onChanged: (String newValue) {
-                            if (newValue != 'N/A') {
-                              setState(() {
-                                _isTextFieldFilled = true;
-                              });
-                            }
-                            if (newValue == 'N/A') {
-                              setState(() {
-                                _isTextFieldFilled = false;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    margin: EdgeInsets.all(24),
-                    padding: EdgeInsets.all(5),
-
-                    width: 200,
-                    child: Column(
-                      children: [
-                        Text('What building are you going to?',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16, // set the font size to 16
-                            )),
-                        CustomDropdownButton(
-                          items: [
-                            'N/A',
-                            'ACC',
-                            'Aaron Lazare',
-                            'Medical School'
-                          ],
-                          selectedItem: 'N/A',
-                          onChanged: (String newValue) {
-                            building = newValue;
-                            if (newValue != 'N/A') {
-                              setState(() {
-                                _isTextFieldFilled = true;
-                              });
-                            }
-                            if (newValue == 'N/A') {
-                              setState(() {
-                                _isTextFieldFilled = false;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    //decoration: BoxDecoration(color: Colors.white),
-                  ),
-
-                  Container(
-                    margin: EdgeInsets.all(24),
-                    child: ElevatedButton(
-                      child: const Text('Next'),
-                      onPressed: _isTextFieldFilled
-                          ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const FavoritesPage()),
-                              );
-                            }
-                          : null,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 
-class OpeningPage extends StatefulWidget {
+  class OpeningPage extends StatefulWidget {
   const OpeningPage({super.key});
 
   @override
   _OpeningPageState createState() => _OpeningPageState();
-}
+  }
 
-class _OpeningPageState extends State<OpeningPage> {
+  class _OpeningPageState extends State<OpeningPage> {
   @override
   void initState() {
-    super.initState();
+  super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('You have no annoucements!'),
-      ),
-    );
+  return Scaffold(
+  body: Center(
+  child: Text('You have no annoucements!'),
+  ),
+  );
   }
-}
+  }
 
-class CustomDropdownButton extends StatefulWidget {
+  class CustomDropdownButton extends StatefulWidget {
   final List<String> items;
   final String selectedItem;
   final Function(String) onChanged;
 
   CustomDropdownButton({
-    required this.items,
-    required this.selectedItem,
-    required this.onChanged,
+  required this.items,
+  required this.selectedItem,
+  required this.onChanged,
   });
 
   @override
   _CustomDropdownButtonState createState() => _CustomDropdownButtonState();
-}
+  }
 
-class _CustomDropdownButtonState extends State<CustomDropdownButton> {
+  class _CustomDropdownButtonState extends State<CustomDropdownButton> {
   String? _selectedItem;
 
   @override
   void initState() {
-    super.initState();
-    _selectedItem = widget.selectedItem;
+  super.initState();
+  _selectedItem = widget.selectedItem;
   }
 
   @override
   Widget build(BuildContext context) {
+  return Material(
+  child: DropdownButton<String>(
+  value: _selectedItem,
+  onChanged: (String? newValue) {
+  setState(() {
+  _selectedItem = newValue;
+  widget.onChanged(newValue!);
+  });
+  },
+  items: widget.items.map((String item) {
+  return DropdownMenuItem<String>(
+  value: item,
+  child: Text(item),
+  );
+  }).toList(),
+  ),
+  );
+  }
+  }
+//creates a list from firebase document
+  class FirebaseListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+  return Scaffold(
+  appBar: AppBar(
+  title: Text('Firebase List'),
+  ),
+  body: StreamBuilder<DocumentSnapshot>(
+  stream: FirebaseFirestore.instance
+      .collection('buildings')
+      .doc('11')
+      .collection('my_collection')
+      .doc('my_document')
+      .snapshots(),
+  builder: (context, snapshot) {
+  if (!snapshot.hasData) {
+  return Center(
+  child: CircularProgressIndicator(),
+  );
+  }
+
+  final data = snapshot.data!.data() as Map<String, dynamic>;
+  final myList = data['my_list'] as List<dynamic>;
+
+  return ListView.builder(
+  itemCount: myList.length,
+  itemBuilder: (context, index) {
+  final item = myList[index];
+  return ListTile(
+  title: Text(item),
+  );
+  },
+  );
+  },
+  ),
+  );
+  }
+  }
+
+class SearchPage extends StatefulWidget {
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  final CollectionReference doctorsRef =
+  FirebaseFirestore.instance.collection('buildings');
+  List<String> _suggestions = [];
+  TextEditingController _searchController = TextEditingController();
+  bool _isTextFieldFilled = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Material(
-      child: DropdownButton<String>(
-        value: _selectedItem,
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedItem = newValue;
-            widget.onChanged(newValue!);
-          });
-        },
-        items: widget.items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
-        }).toList(),
-      ),
+        child: Column(
+          children: [
+            TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                _getSuggestions(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Search buildings',
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.search),
+              ),
+            ),
+            SizedBox(height: 8),
+            Container(
+              height: 100,
+              child: ListView.builder(
+                itemCount: _suggestions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_suggestions[index]),
+                    onTap: () {
+                      setState(() {
+                        _searchController.text = _suggestions[index];
+                        _isTextFieldFilled = true;
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(5),
+                  width: 200,
+                  child: Column(
+                    children: [
+                      Text('What is your doctors first name?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16, // set the font size to 16
+                          )),
+                      CustomDropdownButton(
+                        items: ['N/A', 'Item 2', 'Item 3'],
+                        selectedItem: 'N/A',
+                        onChanged: (String newValue) {
+                          if (newValue != 'N/A') {
+                            setState(() {
+                              _isTextFieldFilled = true;
+                            });
+                          }
+                          if (newValue == 'N/A') {
+                            setState(() {
+                              _isTextFieldFilled = false;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(5),
+                  width: 200,
+                  child: Column(
+                    children: [
+                      Text('What department are you going to?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16, // set the font size to 16
+                          )),
+                      CustomDropdownButton(
+                        items: ['N/A', 'Item 2', 'Item 3'],
+                        selectedItem: 'N/A',
+                        onChanged: (String newValue) {
+                          if (newValue != 'N/A') {
+                            setState(() {
+                              _isTextFieldFilled = true;
+                            });
+                          }
+                          if (newValue == 'N/A') {
+                            setState(() {
+                              _isTextFieldFilled = false;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(5),
+                  width: 200,
+                  child: Column(
+                    children: [
+                      Text('What building are you going to?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16, // set the font size to 16
+                          )),
+                      CustomDropdownButton(
+                        items: [
+                          'N/A',
+                          'ACC',
+                          'Aaron Lazare',
+                          'Medical School'
+                        ],
+                        selectedItem: 'N/A',
+                        onChanged: (String newValue) {
+                          building = newValue;
+                          if (newValue != 'N/A') {
+                            setState(() {
+                              _isTextFieldFilled = true;
+                            });
+                          }
+                          if (newValue == 'N/A') {
+                            setState(() {
+                              _isTextFieldFilled = false;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(24),
+                  child: ElevatedButton(
+                    child: const Text('Next'),
+                    onPressed: _isTextFieldFilled
+                        ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+
+
+                            const FavoritesPage()),
+                      );
+                    }
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+
+          ],
+        )
     );
+  }
+
+  void _getSuggestions(String query) async {
+    List<String> suggestions = [];
+    QuerySnapshot querySnapshot = await doctorsRef
+        .where('building_name', isGreaterThanOrEqualTo: query)
+        .get();
+    querySnapshot.docs.forEach((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      String buildingName = data['building_name'];
+      if (buildingName.toLowerCase().contains(query.toLowerCase())) {
+        suggestions.add(buildingName);
+      }
+    });
+
+    setState(() {
+      _suggestions = suggestions;
+    });
   }
 }

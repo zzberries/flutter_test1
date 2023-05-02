@@ -139,7 +139,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         onPressed: () {
           Navigator.pop(
             context,
-            MaterialPageRoute(builder: (context) => const GeneratorPage()),
+            MaterialPageRoute(builder: (context) => SearchPage()),
           );
         },
         label: Text('Back'),
