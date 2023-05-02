@@ -316,35 +316,55 @@ class _SearchPageState extends State<SearchPage> {
     return Material(
         child: Column(
           children: [
-            TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                _getSuggestions(value);
-              },
-              decoration: InputDecoration(
-                hintText: 'Search buildings',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.search),
-              ),
-            ),
-            SizedBox(height: 8),
-            Container(
-              height: 100,
-              child: ListView.builder(
-                itemCount: _suggestions.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_suggestions[index]),
+            Stack(
+              children: [
+                TextField(
+                  controller: _searchController,
+                  onTap: () {
+                    setState(() {
+                      _isTextFieldFilled = true;
+                    });
+                  },
+                  onChanged: (value) {
+                    _getSuggestions(value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search buildings',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.search),
+                  ),
+                ),
+                Visibility(
+                  visible: _isTextFieldFilled,
+                  child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        _searchController.text = _suggestions[index];
-                        _isTextFieldFilled = true;
+                        _isTextFieldFilled = false;
                       });
                     },
-                  );
-                },
-              ),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 60),
+                      height: 100,
+                      child: ListView.builder(
+                        itemCount: _suggestions.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(_suggestions[index]),
+                            onTap: () {
+                              setState(() {
+                                _searchController.text = _suggestions[index];
+                                _isTextFieldFilled = false;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+
 
             Column(
               mainAxisSize: MainAxisSize.min,
