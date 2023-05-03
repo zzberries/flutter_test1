@@ -5,6 +5,7 @@ import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 
 import 'main.dart';
+import 'home_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -26,19 +27,20 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     //Future<Position> futurePose = getLatLng();
     // Position pos = await futurePose ;
-    String buildingName = building;
+    // String buildingName = building;
     double lat = 42.27507; // south road parking garage
     double lng = -71.76205;
-    if (building == "ACC") {
-      lat = 42.27514;
-      lng = -71.76259;
-    } else if (building == "Aaron Lazare") {
-      lat = 42.27656;
-      lng = -71.76399;
-    } else if (building == "Medical School") {
-      lat = 42.27756;
-      lng = -71.7617;
-    }
+    // if (building == "ACC") {
+    //   lat = 42.27514;
+    //   lng = -71.76259;
+    // } else if (building == "Aaron Lazare") {
+    //   lat = 42.27656;
+    //   lng = -71.76399;
+    // } else if (building == "Medical School") {
+    //   lat = 42.27756;
+    //   lng = -71.7617;
+    // }
+
     //lat = pos?.latitude;
     // double? lng  = pos?.latitude;
     //print(lat.toString()+", "+lng.toString());
@@ -60,8 +62,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('You\'re at the First Road Parking Garage.\nHead to ' +
-            buildingName),
+        title: Text('You are here right now!'),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
