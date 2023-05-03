@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 import 'firebase_options.dart';
 
 import 'dart:async';
@@ -264,6 +265,7 @@ class _SearchPageState extends State<SearchPage> {
   List<String> _suggestions = [];
   TextEditingController _searchController = TextEditingController();
   bool _isTextFieldFilled = false;
+  String _doctorName = 'N/A';
 
   @override
   Widget build(BuildContext context) {
@@ -323,36 +325,30 @@ class _SearchPageState extends State<SearchPage> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin: EdgeInsets.all(24),
-                  padding: EdgeInsets.all(5),
-                  width: 200,
-                  child: Column(
-                    children: [
                       Text('What is your doctors first name?',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16, // set the font size to 16
                           )),
-                      CustomDropdownButton(
-                        items: ['N/A', 'Item 2', 'Item 3'],
-                        selectedItem: 'N/A',
-                        onChanged: (String newValue) {
-                          if (newValue != 'N/A') {
-                            setState(() {
-                              _isTextFieldFilled = true;
-                            });
-                          }
-                          if (newValue == 'N/A') {
-                            setState(() {
-                              _isTextFieldFilled = false;
-                            });
-                          }
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance.collection('doctors').withConverter(fromFirestore: Doctor.fromFirestore, toFirestore: (Doctor d, _) => d.toFirestore()).snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return const CircularProgressIndicator();
+                          return 
+                          DropdownButton(
+                            items: [DropdownMenuItem(child: Text('N/A'), value: 'N/A'), ...snapshot.data!.docs.map((e) {
+                              var d = e.data();
+                              return DropdownMenuItem(child: Text(d.firstName + ' ' + d.lastName), value: d.firstName + ' ' + d.lastName,);
+                            }).toList(),],
+                            value: _doctorName,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _doctorName = newValue!;
+                              });
+                            },
+                          );
                         },
                       ),
-                    ],
-                  ),
-                ),
                 Container(
                   margin: EdgeInsets.all(24),
                   padding: EdgeInsets.all(5),
@@ -463,3 +459,4 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 }
+
