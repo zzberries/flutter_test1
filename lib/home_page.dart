@@ -1,22 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
-import 'firebase_options.dart';
 
-import 'dart:async';
-
-import 'package:latlong2/latlong.dart';
-import "package:http/http.dart" as http;
-import "dart:convert" as convert;
-
-import 'package:latlong2/latlong.dart' as latlong2;
-import 'package:flutter/widgets.dart';
-
+import 'firestore_collections/Building.dart';
 import 'map_page.dart';
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -74,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
   var selectedIndex = 0;
 
   @override
@@ -128,10 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Expanded(
               child: Container(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .primaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 child: page,
               ),
             ),
@@ -143,8 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
 // This trailing comma makes auto-formatting nicer for build methods.
 }
-
-
 
 class OpeningPage extends StatefulWidget {
   const OpeningPage({super.key});
@@ -214,6 +195,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
     );
   }
 }
+
 //creates a list from firebase document
 class FirebaseListScreen extends StatelessWidget {
   @override
@@ -261,184 +243,199 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final CollectionReference doctorsRef =
-  FirebaseFirestore.instance.collection('buildings');
+      FirebaseFirestore.instance.collection('buildings');
   List<String> _suggestions = [];
   TextEditingController _searchController = TextEditingController();
   bool _isTextFieldFilled = false;
   String _doctorName = 'N/A';
+  String _buildingName = 'N/A';
 
   @override
   Widget build(BuildContext context) {
     return Material(
         child: Column(
+      children: [
+        Stack(
           children: [
-            Stack(
-              children: [
-                TextField(
-                  controller: _searchController,
-                  onTap: () {
+            TextField(
+              controller: _searchController,
+              onTap: () {
+                setState(() {
+                  _isTextFieldFilled = true;
+                });
+              },
+              onChanged: (value) {
+                _getSuggestions(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Search buildings',
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.search),
+              ),
+            ),
+            Visibility(
+              visible: _isTextFieldFilled,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isTextFieldFilled = false;
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 60),
+                  height: 100,
+                  child: ListView.builder(
+                    itemCount: _suggestions.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(_suggestions[index]),
+                        onTap: () {
+                          setState(() {
+                            _searchController.text = _suggestions[index];
+                            _isTextFieldFilled = false;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('What is your doctors first name?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16, // set the font size to 16
+                )),
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('doctors')
+                  .withConverter(
+                      fromFirestore: Doctor.fromFirestore,
+                      toFirestore: (Doctor d, _) => d.toFirestore())
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const CircularProgressIndicator();
+                return DropdownButton(
+                  items: [
+                    const DropdownMenuItem(value: 'N/A', child: Text('N/A')),
+                    ...snapshot.data!.docs.map((e) {
+                      var d = e.data();
+                      return DropdownMenuItem(
+                        value: '${d.firstName} ${d.lastName}',
+                        child: Text('${d.firstName} ${d.lastName}'),
+                      );
+                    }).toList(),
+                  ],
+                  value: _doctorName,
+                  onChanged: (String? newValue) {
                     setState(() {
-                      _isTextFieldFilled = true;
+                      _doctorName = newValue!;
                     });
                   },
-                  onChanged: (value) {
-                    _getSuggestions(value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Search buildings',
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.search),
-                  ),
-                ),
-                Visibility(
-                  visible: _isTextFieldFilled,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isTextFieldFilled = false;
-                      });
+                );
+              },
+            ),
+            Container(
+              margin: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(5),
+              width: 200,
+              child: Column(
+                children: [
+                  const Text('What department are you going to?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16, // set the font size to 16
+                      )),
+                  CustomDropdownButton(
+                    items: ['N/A', 'ACC', 'Aaron Lazare', 'Medical School'],
+                    selectedItem: 'N/A',
+                    onChanged: (String newValue) {
+                      //building = newValue;
+                      if (newValue != 'N/A') {
+                        setState(() {
+                          _isTextFieldFilled = true;
+                        });
+                      }
+                      if (newValue == 'N/A') {
+                        setState(() {
+                          _isTextFieldFilled = false;
+                        });
+                      }
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(top: 60),
-                      height: 100,
-                      child: ListView.builder(
-                        itemCount: _suggestions.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(_suggestions[index]),
-                            onTap: () {
-                              setState(() {
-                                _searchController.text = _suggestions[index];
-                                _isTextFieldFilled = false;
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-
-
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                      Text('What is your doctors first name?',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          )),
-                      StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('doctors').withConverter(fromFirestore: Doctor.fromFirestore, toFirestore: (Doctor d, _) => d.toFirestore()).snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) return const CircularProgressIndicator();
-                          return 
-                          DropdownButton(
-                            items: [DropdownMenuItem(child: Text('N/A'), value: 'N/A'), ...snapshot.data!.docs.map((e) {
-                              var d = e.data();
-                              return DropdownMenuItem(child: Text(d.firstName + ' ' + d.lastName), value: d.firstName + ' ' + d.lastName,);
-                            }).toList(),],
-                            value: _doctorName,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _doctorName = newValue!;
-                              });
-                            },
-                          );
-                        },
-                      ),
-                Container(
-                  margin: EdgeInsets.all(24),
-                  padding: EdgeInsets.all(5),
-                  width: 200,
-                  child: Column(
-                    children: [
-                      Text('What department are you going to?',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          )),
-                      CustomDropdownButton(
-                        items: ['N/A', 'Item 2', 'Item 3'],
-                        selectedItem: 'N/A',
-                        onChanged: (String newValue) {
-                          if (newValue != 'N/A') {
-                            setState(() {
-                              _isTextFieldFilled = true;
-                            });
-                          }
-                          if (newValue == 'N/A') {
-                            setState(() {
-                              _isTextFieldFilled = false;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(24),
-                  padding: EdgeInsets.all(5),
-                  width: 200,
-                  child: Column(
-                    children: [
-                      Text('What building are you going to?',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          )),
-                      CustomDropdownButton(
+            Container(
+              margin: EdgeInsets.all(24),
+              padding: EdgeInsets.all(5),
+              width: 200,
+              child: Column(
+                children: [
+                  const Text('What building are you going to?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16, // set the font size to 16
+                      )),
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('buildings')
+                        .withConverter(
+                            fromFirestore: Building.fromFirestore,
+                            toFirestore: (Building b, _) => b.toFirestore())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
+                      return DropdownButton(
                         items: [
-                          'N/A',
-                          'ACC',
-                          'Aaron Lazare',
-                          'Medical School'
+                          const DropdownMenuItem(
+                              value: 'N/A', child: Text('N/A')),
+                          ...snapshot.data!.docs.map((e) {
+                            var d = e.data();
+                            return DropdownMenuItem(
+                              value: 'building_name',
+                              child: Text(d.buildingName),
+                            );
+                          }).toList(),
                         ],
-                        selectedItem: 'N/A',
-                        onChanged: (String newValue) {
-                          //building = newValue;
-                          if (newValue != 'N/A') {
-                            setState(() {
-                              _isTextFieldFilled = true;
-                            });
-                          }
-                          if (newValue == 'N/A') {
-                            setState(() {
-                              _isTextFieldFilled = false;
-                            });
-                          }
+                        value: _buildingName,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _buildingName = newValue!;
+                          });
                         },
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(24),
-                  child: ElevatedButton(
-                    child: const Text('Next'),
-                    onPressed: _isTextFieldFilled
-                        ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-
-
-                            const FavoritesPage()),
                       );
-                    }
-                        : null,
+                    },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-
+            Container(
+              margin: EdgeInsets.all(24),
+              child: ElevatedButton(
+                child: const Text('Next'),
+                onPressed: _isTextFieldFilled
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const FavoritesPage()),
+                        );
+                      }
+                    : null,
+              ),
+            ),
           ],
-        )
-    );
+        ),
+      ],
+    ));
   }
 
   void _getSuggestions(String query) async {
@@ -459,4 +456,3 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 }
-

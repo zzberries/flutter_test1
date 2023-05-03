@@ -4,9 +4,9 @@ class Building {
   final int buildingID;
   final String buildingName;
   final String campus;
-  final int lat;
-  final int long;
-  
+  final double lat;
+  final double long;
+
   Building({
     required this.buildingID,
     required this.buildingName,
