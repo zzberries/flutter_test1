@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 
 import 'firestore_collections/Building.dart';
+import 'firestore_collections/Department.dart';
 import 'map_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,43 +25,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  String _str = "";
-
-  // Initial Selected Value
-  String dropdownvalue = 'N/A';
-
-  // List of items in our dropdown menu
-  var items = [
-    'N/A',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  void _changeStr(String text) {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _str = text;
-    });
-  }
-
   var selectedIndex = 0;
 
   @override
@@ -77,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = SearchPage();
         break;
       case 1:
-        page = OpeningPage();
+        page = const OpeningPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -94,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             SafeArea(
               child: NavigationRail(
                 extended: constraints.maxWidth >= 600,
-                destinations: [
+                destinations: const [
                   NavigationRailDestination(
                     icon: Icon(Icons.home),
                     label: Text('Home'),
@@ -142,55 +106,9 @@ class _OpeningPageState extends State<OpeningPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: Text('You have no annoucements!'),
-      ),
-    );
-  }
-}
-
-class CustomDropdownButton extends StatefulWidget {
-  final List<String> items;
-  final String selectedItem;
-  final Function(String) onChanged;
-
-  CustomDropdownButton({
-    required this.items,
-    required this.selectedItem,
-    required this.onChanged,
-  });
-
-  @override
-  _CustomDropdownButtonState createState() => _CustomDropdownButtonState();
-}
-
-class _CustomDropdownButtonState extends State<CustomDropdownButton> {
-  String? _selectedItem;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedItem = widget.selectedItem;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: DropdownButton<String>(
-        value: _selectedItem,
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedItem = newValue;
-            widget.onChanged(newValue!);
-          });
-        },
-        items: widget.items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
-        }).toList(),
+        child: Text('You have no announcements!'),
       ),
     );
   }
@@ -202,7 +120,7 @@ class FirebaseListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Firebase List'),
+        title: const Text('Firebase List'),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -213,7 +131,7 @@ class FirebaseListScreen extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -249,6 +167,7 @@ class _SearchPageState extends State<SearchPage> {
   bool _isTextFieldFilled = false;
   String _doctorName = 'N/A';
   String _buildingName = 'N/A';
+  String _departmentName = 'N/A';
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +186,7 @@ class _SearchPageState extends State<SearchPage> {
               onChanged: (value) {
                 _getSuggestions(value);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Search buildings',
                 border: OutlineInputBorder(),
                 suffixIcon: Icon(Icons.search),
@@ -306,7 +225,7 @@ class _SearchPageState extends State<SearchPage> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('What is your doctors first name?',
+            const Text('If known, select your doctor\'s name',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16, // set the font size to 16
@@ -326,8 +245,8 @@ class _SearchPageState extends State<SearchPage> {
                     ...snapshot.data!.docs.map((e) {
                       var d = e.data();
                       return DropdownMenuItem(
-                        value: '${d.firstName} ${d.lastName}',
-                        child: Text('${d.firstName} ${d.lastName}'),
+                        value: '${d.lastName}, ${d.firstName}',
+                        child: Text('${d.lastName}, ${d.firstName}'),
                       );
                     }).toList(),
                   ],
@@ -343,7 +262,7 @@ class _SearchPageState extends State<SearchPage> {
             Container(
               margin: const EdgeInsets.all(24),
               padding: const EdgeInsets.all(5),
-              width: 200,
+              width: 400,
               child: Column(
                 children: [
                   const Text('What department are you going to?',
@@ -351,30 +270,44 @@ class _SearchPageState extends State<SearchPage> {
                       style: TextStyle(
                         fontSize: 16, // set the font size to 16
                       )),
-                  CustomDropdownButton(
-                    items: ['N/A', 'ACC', 'Aaron Lazare', 'Medical School'],
-                    selectedItem: 'N/A',
-                    onChanged: (String newValue) {
-                      //building = newValue;
-                      if (newValue != 'N/A') {
-                        setState(() {
-                          _isTextFieldFilled = true;
-                        });
-                      }
-                      if (newValue == 'N/A') {
-                        setState(() {
-                          _isTextFieldFilled = false;
-                        });
-                      }
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('departments')
+                        .withConverter(
+                            fromFirestore: Department.fromFirestore,
+                            toFirestore: (Department d, _) => d.toFirestore())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData)
+                        return const CircularProgressIndicator();
+                      return DropdownButton(
+                        items: [
+                          const DropdownMenuItem(
+                              value: 'N/A', child: Text('N/A')),
+                          ...snapshot.data!.docs.map((e) {
+                            var d = e.data();
+                            return DropdownMenuItem(
+                              value: d.departmentName,
+                              child: Text(d.departmentName),
+                            );
+                          }).toList(),
+                        ],
+                        value: _departmentName,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _departmentName = newValue!;
+                          });
+                        },
+                      );
                     },
                   ),
                 ],
               ),
             ),
             Container(
-              margin: EdgeInsets.all(24),
-              padding: EdgeInsets.all(5),
-              width: 200,
+              margin: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(5),
+              width: 400,
               child: Column(
                 children: [
                   const Text('What building are you going to?',
@@ -394,23 +327,30 @@ class _SearchPageState extends State<SearchPage> {
                         return const CircularProgressIndicator();
                       }
                       return DropdownButton(
+                        value: _buildingName,
+                        icon: const Icon(Icons.arrow_downward),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _buildingName = newValue!;
+                          });
+                        },
                         items: [
                           const DropdownMenuItem(
                               value: 'N/A', child: Text('N/A')),
                           ...snapshot.data!.docs.map((e) {
                             var d = e.data();
                             return DropdownMenuItem(
-                              value: 'building_name',
+                              value: d.buildingName,
                               child: Text(d.buildingName),
                             );
                           }).toList(),
                         ],
-                        value: _buildingName,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _buildingName = newValue!;
-                          });
-                        },
                       );
                     },
                   ),
@@ -418,10 +358,11 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.all(24),
+              margin: const EdgeInsets.all(24),
               child: ElevatedButton(
-                child: const Text('Next'),
-                onPressed: _isTextFieldFilled
+                onPressed: !(_doctorName == 'N/A' &&
+                        _doctorName == _buildingName &&
+                        _doctorName == _departmentName)
                     ? () {
                         Navigator.push(
                           context,
@@ -430,6 +371,7 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       }
                     : null,
+                child: const Text('Next'),
               ),
             ),
           ],
@@ -443,13 +385,13 @@ class _SearchPageState extends State<SearchPage> {
     QuerySnapshot querySnapshot = await doctorsRef
         .where('building_name', isGreaterThanOrEqualTo: query)
         .get();
-    querySnapshot.docs.forEach((doc) {
+    for (var doc in querySnapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
       String buildingName = data['building_name'];
       if (buildingName.toLowerCase().contains(query.toLowerCase())) {
         suggestions.add(buildingName);
       }
-    });
+    }
 
     setState(() {
       _suggestions = suggestions;
