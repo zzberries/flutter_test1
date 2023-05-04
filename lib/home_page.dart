@@ -346,7 +346,11 @@ class _SearchPageState extends State<SearchPage> {
                           ...snapshot.data!.docs.map((e) {
                             var d = e.data();
                             return DropdownMenuItem(
+<<<<<<< Updated upstream
                               value: d.buildingName,
+=======
+                              value: 'd.buildingName',
+>>>>>>> Stashed changes
                               child: Text(d.buildingName),
                             );
                           }).toList(),
