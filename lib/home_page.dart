@@ -4,7 +4,10 @@ import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'map_page.dart';
+import 'choice_page.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -351,8 +354,9 @@ class _SearchPageState extends State<SearchPage> {
                             toFirestore: (Department d, _) => d.toFirestore())
                         .snapshots(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData)
+                      if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
+                      }
                       return DropdownButton(
                         items: [
                           const DropdownMenuItem(
@@ -381,6 +385,60 @@ class _SearchPageState extends State<SearchPage> {
             ),
             Container(
               margin: const EdgeInsets.all(24),
+
+              padding: const EdgeInsets.all(5),
+              width: 400,
+              child: Column(
+                children: [
+                  const Text('What building are you going to?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16, // set the font size to 16
+                      )),
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('buildings')
+                        .withConverter(
+                            fromFirestore: Building.fromFirestore,
+                            toFirestore: (Building b, _) => b.toFirestore())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
+                      return DropdownButton(
+                        value: _buildingName,
+                        icon: const Icon(Icons.arrow_downward),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _buildingName = newValue!;
+                          });
+                        },
+                        items: [
+                          const DropdownMenuItem(
+                              value: 'N/A', child: Text('N/A')),
+                          ...snapshot.data!.docs.map((e) {
+                            var d = e.data();
+                            return DropdownMenuItem(
+                              value: d.buildingName,
+                              child: Text(d.buildingName),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(24),
               child: ElevatedButton(
                 onPressed: !(_doctorName == 'N/A' &&
                         _departmentName == 'N/A' &&
@@ -397,6 +455,23 @@ class _SearchPageState extends State<SearchPage> {
 
               ),
             ),
+            Container(
+              margin: const EdgeInsets.all(24),
+              child: ElevatedButton(
+                onPressed: !(_doctorName == 'N/A' &&
+                    _doctorName == _buildingName &&
+                    _doctorName == _departmentName)
+                    ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ChoicePage()),
+                  );
+                }
+                    : null,
+                child: const Text('Selection page'),
+              ),
+            )
           ],
         ),
       ],
