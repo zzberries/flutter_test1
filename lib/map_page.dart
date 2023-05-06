@@ -1,28 +1,37 @@
-<<<<<<< Updated upstream
-=======
+
 import 'package:floating_overlay/floating_overlay.dart';
 import 'package:flutter/cupertino.dart';
->>>>>>> Stashed changes
+
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
-
+import 'globals.dart';
 import 'main.dart';
 import 'home_page.dart';
 import 'dart:math' as math;
 
 class FavoritesPage extends StatefulWidget {
-  const FavoritesPage({super.key});
 
+  final double lat;
+  final double long;
+
+  FavoritesPage({required this.lat, required this.long});
   @override
   State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
+  double _lat = 0.0;
+  double _long = 0.0;
   bool _isImageVisible = false;
   bool _hasPermissions = true;
+
+
+
+
+
   CompassEvent? _lastRead;
   DateTime? _lastReadAt;
 
@@ -37,6 +46,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   void initState() {
     super.initState();
+    _lat = widget.lat;
+    _long = widget.long;
 
 
   }
@@ -47,8 +58,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
     //Future<Position> futurePose = getLatLng();
     // Position pos = await futurePose ;
     // String buildingName = building;
-    double lat = 42.27507; // south road parking garage
-    double lng = -71.76205;
+    double lat = _lat; // south road parking garage
+    double lng = _long;
     // if (building == "ACC") {
     //   lat = 42.27514;
     //   lng = -71.76259;
