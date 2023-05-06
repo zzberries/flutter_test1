@@ -3,7 +3,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ChoicePage extends StatefulWidget {
-  const ChoicePage({super.key});
+  final String buildingName;
+  final String doctorName;
+  final String departmentName;
+
+  const ChoicePage(
+      {super.key,
+      required this.buildingName,
+      required this.doctorName,
+      required this.departmentName});
 
   @override
   ChoicePageState createState() => ChoicePageState();

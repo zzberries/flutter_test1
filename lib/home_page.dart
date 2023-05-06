@@ -465,7 +465,7 @@ class _SearchPageState extends State<SearchPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ChoicePage()),
+                        builder: (context) => ChoicePage(buildingName: _buildingName, departmentName: _departmentName, doctorName: _doctorName,)),
                   );
                 }
                     : null,
