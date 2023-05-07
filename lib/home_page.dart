@@ -2,23 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 
+import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
-
 import 'map_page.dart';
-import 'choice_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -31,12 +21,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -97,10 +81,10 @@ class OpeningPage extends StatefulWidget {
   const OpeningPage({super.key});
 
   @override
-  _OpeningPageState createState() => _OpeningPageState();
+  OpeningPageState createState() => OpeningPageState();
 }
 
-class _OpeningPageState extends State<OpeningPage> {
+class OpeningPageState extends State<OpeningPage> {
   @override
   void initState() {
     super.initState();
@@ -170,6 +154,11 @@ class _SearchPageState extends State<SearchPage> {
   String _doctorName = 'N/A';
   String _buildingName = 'N/A';
   String _departmentName = 'N/A';
+
+  int _doctorID = -1;
+  int _buildingID = -1;
+  int _departmentID = -1;
+
   double _lat = 0.0;
   int _id = 0;
 
@@ -259,24 +248,24 @@ class _SearchPageState extends State<SearchPage> {
                             toFirestore: (Building d, _) => d.toFirestore())
                         .snapshots(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData)
+                      if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
+                      }
                       return DropdownButton(
                         items: [
-                          const DropdownMenuItem(
-                              value: 'N/A', child: Text('N/A')),
+                          const DropdownMenuItem(value: -1, child: Text('N/A')),
                           ...snapshot.data!.docs.map((e) {
                             var d = e.data();
                             return DropdownMenuItem(
-                              value: d.buildingName,
+                              value: d.buildingID,
                               child: Text(d.buildingName),
                             );
                           }).toList(),
                         ],
-                        value: _buildingName,
-                        onChanged: (String? newValue) async {
+                        value: _buildingID,
+                        onChanged: (int? newValue) async {
                           setState(() {
-                            _buildingName = newValue!;
+                            _buildingID = newValue!;
                           });
                           await _getLatLong(_buildingName);
                         },
@@ -305,24 +294,24 @@ class _SearchPageState extends State<SearchPage> {
                             toFirestore: (Doctor d, _) => d.toFirestore())
                         .snapshots(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData)
+                      if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
+                      }
                       return DropdownButton(
                         items: [
-                          const DropdownMenuItem(
-                              value: 'N/A', child: Text('N/A')),
+                          const DropdownMenuItem(value: -1, child: Text('N/A')),
                           ...snapshot.data!.docs.map((e) {
                             var d = e.data();
                             return DropdownMenuItem(
-                              value: '${d.lastName}, ${d.firstName}',
+                              value: d.doctorID,
                               child: Text('${d.lastName}, ${d.firstName}'),
                             );
                           }).toList(),
                         ],
-                        value: _doctorName,
-                        onChanged: (String? newValue) {
+                        value: _doctorID,
+                        onChanged: (int? newValue) {
                           setState(() {
-                            _doctorName = newValue!;
+                            _doctorID = newValue!;
                           });
                         },
                       );
@@ -355,20 +344,19 @@ class _SearchPageState extends State<SearchPage> {
                       }
                       return DropdownButton(
                         items: [
-                          const DropdownMenuItem(
-                              value: 'N/A', child: Text('N/A')),
+                          const DropdownMenuItem(value: -1, child: Text('N/A')),
                           ...snapshot.data!.docs.map((e) {
                             var d = e.data();
                             return DropdownMenuItem(
-                              value: d.departmentName,
+                              value: d.departmentID,
                               child: Text(d.departmentName),
                             );
                           }).toList(),
                         ],
-                        value: _departmentName,
-                        onChanged: (String? newValue) async {
+                        value: _departmentID,
+                        onChanged: (int? newValue) async {
                           setState(() {
-                            _departmentName = newValue!;
+                            _departmentID = newValue!;
                           });
                           await _getDepartmentId(_departmentName);
                         },
@@ -381,20 +369,18 @@ class _SearchPageState extends State<SearchPage> {
             Container(
               margin: const EdgeInsets.all(24),
               child: ElevatedButton(
-                onPressed: !(_doctorName == 'N/A' &&
-                        _departmentName == 'N/A' &&
-                        _buildingName == 'N/A')
+                onPressed: !(_doctorID == -1 &&
+                        _departmentID == -1 &&
+                        _buildingID == -1)
                     ? () {
-                        if (
-                            _departmentName != 'N/A' &&
-                            _buildingName == 'N/A') {
+                        if (_departmentID != -1 && _buildingID == -1) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChoicePage(
-                                buildingName: _buildingName,
-                                id: _id,
-                                doctorName: _doctorName,
+                                buildingID: _buildingID,
+                                departmentID: _departmentID,
+                                doctorID: _doctorID,
                               ),
                             ),
                           );
