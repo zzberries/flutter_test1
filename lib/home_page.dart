@@ -4,11 +4,9 @@ import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'map_page.dart';
 import 'choice_page.dart';
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -173,6 +171,8 @@ class _SearchPageState extends State<SearchPage> {
   String _buildingName = 'N/A';
   String _departmentName = 'N/A';
   double _lat = 0.0;
+  int _id = 0;
+
   double _long = 0.0;
 
   @override
@@ -188,10 +188,8 @@ class _SearchPageState extends State<SearchPage> {
         Container(
           margin: const EdgeInsets.all(24),
           padding: const EdgeInsets.all(5),
-
           child: Stack(
             children: [
-
               TextField(
                 controller: _searchController,
                 onTap: () {
@@ -257,8 +255,8 @@ class _SearchPageState extends State<SearchPage> {
                     stream: FirebaseFirestore.instance
                         .collection('buildings')
                         .withConverter(
-                        fromFirestore: Building.fromFirestore,
-                        toFirestore: (Building d, _) => d.toFirestore())
+                            fromFirestore: Building.fromFirestore,
+                            toFirestore: (Building d, _) => d.toFirestore())
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData)
@@ -281,7 +279,6 @@ class _SearchPageState extends State<SearchPage> {
                             _buildingName = newValue!;
                           });
                           await _getLatLong(_buildingName);
-
                         },
                       );
                     },
@@ -320,7 +317,6 @@ class _SearchPageState extends State<SearchPage> {
                               value: '${d.lastName}, ${d.firstName}',
                               child: Text('${d.lastName}, ${d.firstName}'),
                             );
-
                           }).toList(),
                         ],
                         value: _doctorName,
@@ -370,67 +366,12 @@ class _SearchPageState extends State<SearchPage> {
                           }).toList(),
                         ],
                         value: _departmentName,
-
-                        onChanged: (String? newValue) {
+                        onChanged: (String? newValue) async {
                           setState(() {
                             _departmentName = newValue!;
-
                           });
+                          await _getDepartmentId(_departmentName);
                         },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(24),
-
-              padding: const EdgeInsets.all(5),
-              width: 400,
-              child: Column(
-                children: [
-                  const Text('What building are you going to?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16, // set the font size to 16
-                      )),
-                  StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('buildings')
-                        .withConverter(
-                            fromFirestore: Building.fromFirestore,
-                            toFirestore: (Building b, _) => b.toFirestore())
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const CircularProgressIndicator();
-                      }
-                      return DropdownButton(
-                        value: _buildingName,
-                        icon: const Icon(Icons.arrow_downward),
-                        elevation: 16,
-                        style: const TextStyle(color: Colors.deepPurple),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.deepPurpleAccent,
-                        ),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _buildingName = newValue!;
-                          });
-                        },
-                        items: [
-                          const DropdownMenuItem(
-                              value: 'N/A', child: Text('N/A')),
-                          ...snapshot.data!.docs.map((e) {
-                            var d = e.data();
-                            return DropdownMenuItem(
-                              value: d.buildingName,
-                              child: Text(d.buildingName),
-                            );
-                          }).toList(),
-                        ],
                       );
                     },
                   ),
@@ -444,34 +385,35 @@ class _SearchPageState extends State<SearchPage> {
                         _departmentName == 'N/A' &&
                         _buildingName == 'N/A')
                     ? () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>  FavoritesPage(lat: _lat, long: _long,)),
-                        );
+                        if (
+                            _departmentName != 'N/A' &&
+                            _buildingName == 'N/A') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChoicePage(
+                                buildingName: _buildingName,
+                                id: _id,
+                                doctorName: _doctorName,
+                              ),
+                            ),
+                          );
+                        } else if (_buildingName != 'N/A') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FavoritesPage(
+                                lat: _lat,
+                                long: _long,
+                              ),
+                            ),
+                          );
+                        }
                       }
                     : null,
                 child: const Text('Next'),
-
               ),
             ),
-            Container(
-              margin: const EdgeInsets.all(24),
-              child: ElevatedButton(
-                onPressed: !(_doctorName == 'N/A' &&
-                    _doctorName == _buildingName &&
-                    _doctorName == _departmentName)
-                    ? () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChoicePage(buildingName: _buildingName, departmentName: _departmentName, doctorName: _doctorName,)),
-                  );
-                }
-                    : null,
-                child: const Text('Selection page'),
-              ),
-            )
           ],
         ),
       ],
@@ -516,6 +458,20 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-
-
+  Future<void> _getDepartmentId(String _departmentName) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('departments')
+        .where('department_name', isEqualTo: _departmentName)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final id = data['department_id'].toInt();
+      setState(() {
+        _id = id;
+      });
+      print('Department Id: $_id');
+    } else {
+      print('No data found for department name: $_departmentName');
+    }
+  }
 }
