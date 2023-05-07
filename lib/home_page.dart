@@ -384,7 +384,7 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                             ),
                           );
-                        } else if (_buildingName != 'N/A') {
+                        } else if (_buildingID != -1) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
