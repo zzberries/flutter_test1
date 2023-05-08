@@ -12,9 +12,9 @@ class ChoicePage extends StatefulWidget {
 
   const ChoicePage(
       {super.key,
-      required this.buildingID,
-      required this.doctorID,
-      required this.departmentID});
+        required this.buildingID,
+        required this.doctorID,
+        required this.departmentID});
 
   @override
   ChoicePageState createState() => ChoicePageState();
@@ -42,7 +42,7 @@ class ChoicePageState extends State<ChoicePage> {
               return Container(
                 height: 200,
                 margin:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                 decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFE0E0E0)),
                     borderRadius: BorderRadius.circular(8.0)),
@@ -53,23 +53,23 @@ class ChoicePageState extends State<ChoicePage> {
                       children: [
                         Expanded(
                             child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.buildingName,
-                              style:
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.buildingName,
+                                  style:
                                   const TextStyle(fontWeight: FontWeight.bold),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Text("${item.campusName} · ${item.departments}",
-                                style: const TextStyle(fontSize: 4,)),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text("${item.campusName} · ${item.departments}",
+                                    style: const TextStyle(fontSize: 4,)),
                                 //Theme.of(context).textTheme.bodySmall),
-                            const SizedBox(height: 8),
-                          ],
-                        )),
+                                const SizedBox(height: 8),
+                              ],
+                            )),
                         Container(
                             width: 100,
                             height: 100,
@@ -114,9 +114,9 @@ class ChoicePageState extends State<ChoicePage> {
     Query<Building> querySnapshot = FirebaseFirestore.instance
         .collection('buildings')
         .withConverter<Building>(
-          fromFirestore: (snapshot, _) => Building.fromFirestore(snapshot, _),
-          toFirestore: (building, _) => building.toFirestore(),
-        );
+      fromFirestore: (snapshot, _) => Building.fromFirestore(snapshot, _),
+      toFirestore: (building, _) => building.toFirestore(),
+    );
 
     if (widget.buildingID != -1) {
       querySnapshot =

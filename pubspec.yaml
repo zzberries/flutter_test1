@@ -32,6 +32,13 @@ dependencies:
     sdk: flutter
   firebase_core: 2.9.0
   cloud_firestore: ^4.5.1
+  permission_handler: ^10.2.0
+  location_permissions: ^4.0.1
+  location: ^4.4.0
+  geolocator: ^9.0.2
+  floating_overlay: ^1.2.1
+  baseflow_plugin_template: ^2.1.1
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -67,6 +74,10 @@ flutter:
 
   assets:
     - assets/UMass_Img.webp
+
+    - assets/compass.png
+    - assets/UMass_Img.jpg
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

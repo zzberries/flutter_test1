@@ -71,7 +71,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
     final bounds = LatLngBounds.fromPoints(coordinates
         .map((location) =>
-            latlong2.LatLng(location.latitude, location.longitude))
+        latlong2.LatLng(location.latitude, location.longitude))
         .toList());
 
     var latLngCoordinates = coordinates
@@ -131,20 +131,20 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   nonRotatedChildren: [
                     TileLayer(
                       urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     ),
                     MarkerLayer(
                         markers: coordinates.map((location) {
-                      return Marker(
-                          point: latlong2.LatLng(
-                              location.latitude, location.longitude),
-                          width: 35,
-                          height: 35,
-                          builder: (context) => const Icon(
+                          return Marker(
+                              point: latlong2.LatLng(
+                                  location.latitude, location.longitude),
+                              width: 35,
+                              height: 35,
+                              builder: (context) => const Icon(
                                 Icons.location_pin,
                               ),
-                          anchorPos: AnchorPos.align(AnchorAlign.top));
-                    }).toList()),
+                              anchorPos: AnchorPos.align(AnchorAlign.top));
+                        }).toList()),
                     // DirectionsLayer(
                     //      coordinates: coordinates,
                     //      color: Colors.blue,
