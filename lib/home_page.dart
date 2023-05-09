@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
+import 'package:flutter_workspace/geolocator-test.dart';
 
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
@@ -267,7 +268,7 @@ class _SearchPageState extends State<SearchPage> {
                               setState(() {
                                 _buildingID = newValue!;
                               });
-                              await _getLatLong(_buildingName);
+                              await _getLatLong(_buildingID);
                             },
                           );
                         },
@@ -424,10 +425,10 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  Future<void> _getLatLong(String buildingName) async {
+  Future<void> _getLatLong(int buildingid) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
-        .where('building_name', isEqualTo: buildingName)
+        .where('building_id', isEqualTo: buildingid)
         .get();
     if (snapshot.size > 0) {
       final data = snapshot.docs[0].data();
@@ -440,7 +441,7 @@ class _SearchPageState extends State<SearchPage> {
       print('Latitude: $_lat');
       print('Longitude: $_long');
     } else {
-      print('No data found for building name: $buildingName');
+      print('No data found for building name: $buildingid');
     }
   }
 
