@@ -28,7 +28,7 @@ class Building {
       campus: data?['campus'],
       lat: data?['lat'],
       long: data?['long'],
-      departmentList: data? ['department_list'],
+      departmentList: data?['department_list'],
     ); //Building
   }
 

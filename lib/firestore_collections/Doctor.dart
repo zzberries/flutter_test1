@@ -9,7 +9,6 @@ class Doctor {
   final String floorNumber;
   final String phoneNumber;
 
-
   Doctor({
     required this.building,
     required this.department,
@@ -21,9 +20,9 @@ class Doctor {
   });
 
   factory Doctor.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options,
-      ) {
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) {
     final data = snapshot.data();
     return Doctor(
       building: data?['building'],

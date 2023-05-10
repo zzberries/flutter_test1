@@ -13,8 +13,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 
 import 'dart:io' show Platform;
 import 'geolocator-test.dart';
-import 'globals.dart';
-import 'home_page.dart';
+import 'search_page.dart';
 import 'main.dart';
 import 'dart:math' as math;
 

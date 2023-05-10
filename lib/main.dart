@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'navbar.dart';
 import 'firebase_options.dart';
-import 'search_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

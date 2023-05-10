@@ -19,10 +19,10 @@ class ChoicePage extends StatefulWidget {
         required this.departmentID});
 
   @override
-  ChoicePageState createState() => ChoicePageState();
+  State<ChoicePage> createState() => _ChoicePageState();
 }
 
-class ChoicePageState extends State<ChoicePage> {
+class _ChoicePageState extends State<ChoicePage> {
   List<Destination> _destinations = [];
   double _lat = 0.0;
   double _long = 0.0;
