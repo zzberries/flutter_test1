@@ -6,6 +6,7 @@ import 'package:flutter_workspace/geolocator-test.dart';
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
+import 'geolocator-test.dart';
 import 'map_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -389,10 +390,7 @@ class _SearchPageState extends State<SearchPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FavoritesPage(
-                              lat: _lat,
-                              long: _long,
-                            ),
+                            builder: (context) => GeolocatorWidget(),
                           ),
                         );
                       }

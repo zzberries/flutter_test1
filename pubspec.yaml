@@ -38,6 +38,8 @@ dependencies:
   geolocator: ^9.0.2
   floating_overlay: ^1.2.1
   baseflow_plugin_template: ^2.1.1
+ # firebase_core_platform_interface: 4.5.1
+  #firebase_messaging: ^13.0.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,6 +52,9 @@ dependencies:
   firebase_storage: ^11.1.0
   google_fonts: ^4.0.4
 #  firebase_core: ^0.7.0
+#dependency_overrides:
+ # firebase_core_platform_interface: 4.4.1
+ # firebase_core_platform_interface: 4.5.1
 
 
 dev_dependencies:
