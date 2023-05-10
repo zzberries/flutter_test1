@@ -5,14 +5,14 @@ import 'package:floating_overlay/floating_overlay.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_workspace/rotate-map.dart';
+import 'package:flutter_workspace/rotate_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:flutter_compass/flutter_compass.dart';
 
 import 'dart:io' show Platform;
-import 'geolocator-test.dart';
+import 'geolocator_test.dart';
 import 'search_page.dart';
 import 'main.dart';
 import 'dart:math' as math;

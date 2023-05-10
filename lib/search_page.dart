@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
-import 'package:flutter_workspace/geolocator-test.dart';
+import 'package:flutter_workspace/geolocator_test.dart';
 
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
