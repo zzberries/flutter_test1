@@ -5,6 +5,7 @@ import 'package:flutter_workspace/search_page.dart';
 import 'package:flutter_workspace/map_page.dart';
 import 'map_page.dart';
 import 'firestore_collections/Building.dart';
+import 'map_page_live.dart';
 
 class ChoicePage extends StatefulWidget {
   final int buildingID;
@@ -97,7 +98,7 @@ class ChoicePageState extends State<ChoicePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => FavoritesPage(lat: _lat, long: _long)),
+                                    builder: (context) => FavoriteMapPage(lat: _lat, long: _long)),
                               );
                             }
                           },
