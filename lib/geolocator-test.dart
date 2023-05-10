@@ -12,7 +12,7 @@ import 'package:latlong2/latlong.dart' as latlong2;
 
 import 'dart:math' as math;
 
-import 'home_page.dart';
+import 'search_page.dart';
 
 /// Defines the main theme color.
 final MaterialColor themeMaterialColor =

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_workspace/home_page.dart';
+import 'package:flutter_workspace/search_page.dart';
 import 'package:flutter_workspace/map_page.dart';
 import 'map_page.dart';
 import 'firestore_collections/Building.dart';

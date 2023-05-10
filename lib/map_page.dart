@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:flutter_compass/flutter_compass.dart';
 
 import 'globals.dart';
-import 'home_page.dart';
+import 'search_page.dart';
 import 'main.dart';
 
 class FavoritesPage extends StatefulWidget {
