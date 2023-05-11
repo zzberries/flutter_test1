@@ -17,8 +17,6 @@ import 'geolocator_test.dart';
 import 'search_page.dart';
 import 'main.dart';
 
-
-
 import 'dart:math' as math;
 
 void main() {
@@ -81,8 +79,6 @@ class _FavoritesPageState extends State<FavoriteMapPage> {
     // TODO: implement build
     throw UnimplementedError();
   }
-
-
 }
 
 class _FavoriteMapPageState extends State<FavoriteMapPage> {
@@ -106,11 +102,11 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   late final MapController _mapController;
   double targetLat = 42.32754;
   double targetLong = -71.679158;
+  bool showMarker = false;
 
   @override
   void initState() {
     super.initState();
-    _toggleServiceStatusStream();
     _mapController = MapController();
   }
 
@@ -120,7 +116,8 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     });
   }
 
-  Widget _buildCompass() { // builds compass
+  Widget _buildCompass() {
+    // builds compass
     return StreamBuilder<CompassEvent>(
       stream: FlutterCompass.events,
       builder: (context, snapshot) {
@@ -172,7 +169,8 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     );
   }
 
-  Widget _buildMap(BuildContext context) { // builds the map
+  Widget _buildMap(BuildContext context) {
+    // builds the map
 
     _getCurrentPosition();
     double? lat = 42.27507; // south road parking garage
@@ -197,29 +195,30 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     const padding = 10.0;
 
     return Scaffold(
-
       appBar: AppBar(
         centerTitle: true,
         title: const Text('You are here right now!'),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
-      body: Stack (
-          children: <Widget>[
-            Container(
-                width: double.maxFinite,
-                height: double.maxFinite,
-                color: Colors.black,
-                child: Material (child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      body: Stack(children: <Widget>[
+        Container(
+            width: double.maxFinite,
+            height: double.maxFinite,
+            color: Colors.black,
+            child: Material(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                   //CurrentLocation(mapController: _mapController),
-                  const Text("Inputted: <building name>, <doctor name>\nHead to floor <Floor #>",
-                  textAlign: TextAlign.center),
-                  const SizedBox(height:10),
+                  const Text(
+                      "Inputted: <building name>, <doctor name>\nHead to floor <Floor #>",
+                      textAlign: TextAlign.center),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () => _toggleImageVisibility(),
                     //onPressed: () {
-                   //   _isImageVisible = !_isImageVisible;
+                    //   _isImageVisible = !_isImageVisible;
 
                     child: const Text('Toggle Image'),
                   ),
@@ -230,7 +229,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                       child: Image.asset('assets/UMass_Img.jpg'),
                     ),
                   if (!_isImageVisible)
-                    Stack (
+                    Stack(
                       children: <Widget>[
                         Container(
                           constraints: const BoxConstraints(maxHeight: 600),
@@ -241,7 +240,8 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                               boundsOptions: FitBoundsOptions(
                                 padding: EdgeInsets.only(
                                   left: padding,
-                                  top: padding + MediaQuery.of(context).padding.top,
+                                  top: padding +
+                                      MediaQuery.of(context).padding.top,
                                   right: padding,
                                   bottom: padding,
                                 ),
@@ -250,22 +250,23 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                             nonRotatedChildren: [
                               TileLayer(
                                 urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                               ),
-                              MarkerLayer(
-                                markers: [
-                                  Marker(
-                                    point: latlong2.LatLng(targetLat, targetLong),
-                                    width: 100,
-                                    height: 100,
-                                    builder: (context) => const Icon(
-                                      Icons.star,
-                                      color: Colors.blue,
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: latlong2.LatLng(
+                                          targetLat, targetLong),
+                                      width: 100,
+                                      height: 100,
+                                      builder: (context) => const Icon(
+                                        Icons.star,
+                                        color: Colors.blue,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              CurrentLocationLayer(),
+                                  ],
+                                ),
+                                CurrentLocationLayer()
                             ],
                           ),
                         ),
@@ -273,14 +274,10 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                       ],
                     )
                 ]))),
-
-          ]
-      ),
-
-
+      ]),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     const sizedBox = SizedBox(
@@ -288,31 +285,31 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     );
 
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        body: _buildMap(context),
-        floatingActionButton: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              onPressed: _recenterMap, //_getCurrentPosition,
-              child: const Icon(Icons.my_location),
-            ),
-            sizedBox,
-            FloatingActionButton(
-              hoverColor: Colors.purple,
-              backgroundColor: Colors.blue,
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchPage()),
-                );
-              },
-              child: const Icon(Icons.arrow_back),
-            ),
-          ],
-        ),
-      );
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: _buildMap(context),
+      floatingActionButton: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _recenterMap, //_getCurrentPosition,
+            child: const Icon(Icons.my_location),
+          ),
+          sizedBox,
+          FloatingActionButton(
+            hoverColor: Colors.purple,
+            backgroundColor: Colors.blue,
+            onPressed: () {
+              Navigator.pop(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage()),
+              );
+            },
+            child: const Icon(Icons.arrow_back),
+          ),
+        ],
+      ),
+    );
   }
 
   // updates currentLat and currentLong
@@ -320,6 +317,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     final hasPermission = await _handlePermission();
 
     if (!hasPermission) {
+      showMarker = false;
       return;
     }
 
@@ -327,11 +325,15 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
 
     currentLat = position.latitude;
     currentLong = position.longitude;
+    showMarker = true;
   }
 
   // recenters the map around the current location
-  _recenterMap() {
-    _mapController.move(latlong2.LatLng(currentLat, currentLong), 17);
+  _recenterMap() async {
+    if(await _handlePermission()) {
+      showMarker = true;
+      _mapController.move(latlong2.LatLng(currentLat, currentLong), 17);
+    }
   }
 
   // returns whether or not permissions are enabled to access current location
@@ -379,124 +381,5 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
 
   Color _determineButtonColor() {
     return _isListening() ? Colors.green : Colors.red;
-  }
-
-  // toggles whether or not the app is actively determining current location
-  void _toggleServiceStatusStream() {
-    if (_serviceStatusStreamSubscription == null) {
-      final serviceStatusStream = _geolocatorPlatform.getServiceStatusStream();
-      _serviceStatusStreamSubscription =
-          serviceStatusStream.handleError((error) {
-        _serviceStatusStreamSubscription?.cancel();
-        _serviceStatusStreamSubscription = null;
-      }).listen((serviceStatus) {
-        String serviceStatusValue;
-        if (serviceStatus == ServiceStatus.enabled) {
-          if (positionStreamStarted) {
-            _toggleListening();
-          }
-          serviceStatusValue = 'enabled';
-        } else {
-          if (_positionStreamSubscription != null) {
-            setState(() {
-              _positionStreamSubscription?.cancel();
-              _positionStreamSubscription = null;
-            });
-          }
-          serviceStatusValue = 'disabled';
-        }
-      });
-    }
-  }
-
-  void _doNothing() {}
-
-  void _toggleListening() {
-    if (_positionStreamSubscription == null) {
-      final positionStream = _geolocatorPlatform.getPositionStream();
-      _positionStreamSubscription = positionStream.handleError((error) {
-        _positionStreamSubscription?.cancel();
-        _positionStreamSubscription = null;
-      }).listen((position) => _doNothing());
-      _positionStreamSubscription?.pause();
-    }
-
-    setState(() {
-      if (_positionStreamSubscription == null) {
-        return;
-      }
-
-      String statusDisplayValue;
-      if (_positionStreamSubscription!.isPaused) {
-        _positionStreamSubscription!.resume();
-        statusDisplayValue = 'resumed';
-      } else {
-        _positionStreamSubscription!.pause();
-        statusDisplayValue = 'paused';
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    if (_positionStreamSubscription != null) {
-      _positionStreamSubscription!.cancel();
-      _positionStreamSubscription = null;
-    }
-
-    super.dispose();
-  }
-
-  void _getLastKnownPosition() async {
-    final position = await _geolocatorPlatform.getLastKnownPosition();
-    if (position != null) {
-      currentLat = position.latitude;
-      currentLong = position.longitude;
-    } else {}
-  }
-
-  void _getLocationAccuracy() async {
-    final status = await _geolocatorPlatform.getLocationAccuracy();
-    _handleLocationAccuracyStatus(status);
-  }
-
-  void _requestTemporaryFullAccuracy() async {
-    final status = await _geolocatorPlatform.requestTemporaryFullAccuracy(
-      purposeKey: "TemporaryPreciseAccuracy",
-    );
-    _handleLocationAccuracyStatus(status);
-  }
-
-  void _handleLocationAccuracyStatus(LocationAccuracyStatus status) {
-    String locationAccuracyStatusValue;
-    if (status == LocationAccuracyStatus.precise) {
-      locationAccuracyStatusValue = 'Precise';
-    } else if (status == LocationAccuracyStatus.reduced) {
-      locationAccuracyStatusValue = 'Reduced';
-    } else {
-      locationAccuracyStatusValue = 'Unknown';
-    }
-  }
-
-  void _openAppSettings() async {
-    final opened = await _geolocatorPlatform.openAppSettings();
-    String displayValue;
-
-    if (opened) {
-      displayValue = 'Opened Application Settings.';
-    } else {
-      displayValue = 'Error opening Application Settings.';
-    }
-  }
-
-  void _openLocationSettings() async {
-    final opened = await _geolocatorPlatform.openLocationSettings();
-    String displayValue;
-
-    if (opened) {
-      displayValue = 'Opened Location Settings';
-    } else {
-      displayValue = 'Error opening Location Settings';
-    }
   }
 }
