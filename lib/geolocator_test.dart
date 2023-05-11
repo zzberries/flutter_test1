@@ -309,7 +309,7 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
 
       floatingActionButton: FloatingActionButton.extended(
         hoverColor: Colors.purple,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.green,
         onPressed: () {
           Navigator.pop(
             context,

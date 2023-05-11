@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
-import 'package:flutter_workspace/geolocator_test.dart';
-
+import 'package:flutter_workspace/map_page_live.dart';
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
@@ -258,7 +257,7 @@ class _SearchPageState extends State<SearchPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => GeolocatorWidget(),
+                            builder: (context) => FavoriteMapPage(lat: 	42.324274, long: -71.67623),//GeolocatorWidget(),
                           ),
                         );
                       }
