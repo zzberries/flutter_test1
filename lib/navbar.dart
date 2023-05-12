@@ -31,6 +31,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent, // Make the app bar transparent
         elevation: 0, // Remove the shadow from the app bar
         flexibleSpace: Container(
