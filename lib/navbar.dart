@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_workspace/live_map.dart';
-import 'package:flutter_workspace/pop_up.dart';
 import 'announcement_page.dart';
-import 'choice_page.dart';
 import 'search_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,14 +8,12 @@ class Navbar extends StatefulWidget {
 
   final String title;
 
-
   @override
   State<Navbar> createState() => _NavbarState();
 }
 
 class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
 
   @override
   void initState() {
@@ -41,7 +36,8 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blue.shade900, Colors.purple.shade900], // Set the gradient colors
+              colors: [Colors.blue.shade900, Colors.purple.shade900],
+              // Set the gradient colors
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -80,10 +76,10 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
             ),
           ),
           Container(
-
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple.shade900, Colors.blue.shade900], // Set the gradient colors
+                colors: [Colors.purple.shade900, Colors.blue.shade900],
+                // Set the gradient colors
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -100,9 +96,12 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                   text: 'Announcements',
                 ),
               ],
-              indicatorColor: Colors.white, // Set the indicator color
-              labelColor: Colors.white, // Set the label color
-              unselectedLabelColor: Colors.white.withOpacity(0.6), // Set the unselected label color
+              indicatorColor: Colors.white,
+              // Set the indicator color
+              labelColor: Colors.white,
+              // Set the label color
+              unselectedLabelColor: Colors.white
+                  .withOpacity(0.6), // Set the unselected label color
             ),
           ),
         ],

@@ -1,23 +1,12 @@
 import 'dart:async';
-
-import 'package:baseflow_plugin_template/baseflow_plugin_template.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_workspace/rotate_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-
-import 'dart:io' show Platform;
-
-import 'geolocator_test.dart';
 import 'search_page.dart';
-import 'main.dart';
-
-import 'dart:math' as math;
 
 class FavoriteMapPage extends StatefulWidget {
   final double lat;
@@ -33,7 +22,6 @@ class _FavoritesPageState extends State<FavoriteMapPage> {
   double _lat = 0.0;
   double _long = 0.0;
   bool _isImageVisible = false;
-  bool _hasPermissions = false;
 
   CompassEvent? _lastRead;
   DateTime? _lastReadAt;
@@ -126,10 +114,6 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
 
     final coordinates = [LatLng(lat, lng)];
-    final coordinatesTarget = [
-      const LatLng(42.27748, -71.7642),
-      LatLng(lat, lng)
-    ];
 
     // calculates the bounds for the default orientation/location of the map
     final bounds = LatLngBounds.fromPoints(coordinates

@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/search_page.dart';
-import 'package:flutter_workspace/map_page.dart';
-import 'map_page.dart';
 import 'firestore_collections/Building.dart';
 import 'map_page_live.dart';
 
@@ -13,11 +11,10 @@ class ChoicePage extends StatefulWidget {
   final int departmentID;
 
   const ChoicePage(
-      {
-        super.key,
-        required this.buildingID,
-        required this.doctorID,
-        required this.departmentID});
+      {super.key,
+      required this.buildingID,
+      required this.doctorID,
+      required this.departmentID});
 
   @override
   State<ChoicePage> createState() => _ChoicePageState();
@@ -47,7 +44,7 @@ class _ChoicePageState extends State<ChoicePage> {
                 final item = _destinations[index];
                 return Container(
                   margin:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                   decoration: BoxDecoration(
                       border: Border.all(color: const Color(0xFFE0E0E0)),
                       borderRadius: BorderRadius.circular(8.0)),
@@ -58,23 +55,25 @@ class _ChoicePageState extends State<ChoicePage> {
                         children: [
                           Expanded(
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.buildingName,
-                                    style:
-                                    const TextStyle(fontWeight: FontWeight.bold),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text("${item.campusName} · ${item.departments}",
-                                      style: const TextStyle(fontSize: 12,)),
-                                  //Theme.of(context).textTheme.bodySmall),
-                                  const SizedBox(height: 8),
-                                ],
-                              )),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.buildingName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 10),
+                              Text("${item.campusName} · ${item.departments}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                  )),
+                              //Theme.of(context).textTheme.bodySmall),
+                              const SizedBox(height: 8),
+                            ],
+                          )),
                           Container(
                               width: 100,
                               height: 100,
@@ -99,12 +98,12 @@ class _ChoicePageState extends State<ChoicePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => FavoriteMapPage(lat: _lat, long: _long)),
+                                    builder: (context) => FavoriteMapPage(
+                                        lat: _lat, long: _long)),
                               );
                             }
                           },
                           child: const Text('Navigate'),
-
                         ),
                       ),
                     ],
@@ -115,8 +114,7 @@ class _ChoicePageState extends State<ChoicePage> {
           ),
         ),
       ),
-      floatingActionButton:
-      FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         hoverColor: Colors.purple,
         backgroundColor: Colors.blue,
         onPressed: () {
@@ -137,9 +135,9 @@ class _ChoicePageState extends State<ChoicePage> {
     Query<Building> querySnapshot = FirebaseFirestore.instance
         .collection('buildings')
         .withConverter<Building>(
-      fromFirestore: (snapshot, _) => Building.fromFirestore(snapshot, _),
-      toFirestore: (building, _) => building.toFirestore(),
-    );
+          fromFirestore: (snapshot, _) => Building.fromFirestore(snapshot, _),
+          toFirestore: (building, _) => building.toFirestore(),
+        );
 
     if (widget.buildingID != -1) {
       querySnapshot =
@@ -178,6 +176,7 @@ class _ChoicePageState extends State<ChoicePage> {
       _destinations = destinationList;
     });
   }
+
   Future<void> _getLatLong(String _buildingName) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
