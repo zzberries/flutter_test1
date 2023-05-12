@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/navbar.dart';
-import 'package:flutter_workspace/search_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OpeningPage extends StatefulWidget {
   const OpeningPage({super.key});
 
   @override
-  _OpeningPageState createState() => _OpeningPageState();
+  State<OpeningPage> createState() => _OpeningPageState();
 }
 
-class _OpeningPageState extends State<OpeningPage> with SingleTickerProviderStateMixin {
+class _OpeningPageState extends State<OpeningPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-
 
   @override
   void initState() {
@@ -28,26 +27,20 @@ class _OpeningPageState extends State<OpeningPage> with SingleTickerProviderStat
     );
     _animationController.forward();
 
-
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Navbar(title:"UMass Navigation")),
+        MaterialPageRoute(
+            builder: (context) => const Navbar(title: "UMass Navigation")),
       );
     });
   }
-
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -64,37 +57,38 @@ class _OpeningPageState extends State<OpeningPage> with SingleTickerProviderStat
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            FadeTransition(
+              FadeTransition(
                 opacity: _animation,
                 child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                Image.asset(
-                'assets/ULogo.png', // Replace with your image path
-                width: 600,
-                height: 600,
-                ),
-
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 15, right:15, left:15),
-                child: Text(
-                  'Welcome to UNav, an app designed for navigating UMass Medical patients to their appointments.',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    textStyle: TextStyle(fontSize: 16, color: Colors.white,),
-                  ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/ULogo.png', // Replace with your image path
+                      width: 600,
+                      height: 600,
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 15, right: 15, left: 15),
+                      child: Text(
+                        'Welcome to UNav, an app designed for navigating UMass Medical patients to their appointments.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
             ],
           ),
         ),
-    ],
-      ),
-    ),
       ),
     );
   }
 }
-
