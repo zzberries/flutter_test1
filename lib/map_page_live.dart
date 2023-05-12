@@ -18,53 +18,6 @@ class FavoriteMapPage extends StatefulWidget {
   State<FavoriteMapPage> createState() => _FavoriteMapPageState();
 }
 
-class _FavoritesPageState extends State<FavoriteMapPage> {
-  double _lat = 0.0;
-  double _long = 0.0;
-  bool _isImageVisible = false;
-
-  CompassEvent? _lastRead;
-  DateTime? _lastReadAt;
-
-  static const String _kLocationServicesDisabledMessage =
-      'Location services are disabled.';
-  static const String _kPermissionDeniedMessage = 'Permission denied.';
-  static const String _kPermissionDeniedForeverMessage =
-      'Permission denied forever.';
-  static const String _kPermissionGrantedMessage = 'Permission granted.';
-
-  final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
-  StreamSubscription<Position>? _positionStreamSubscription;
-  StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
-  bool positionStreamStarted = false;
-  late double currentLat = 0;
-  late double currentLong = 0;
-  late final MapController _mapController;
-  double targetLat = 42.2775;
-  double targetLong = -71.7617;
-
-  // toggles whether the image of the target building or the map/compass is displayed
-  void _toggleImageVisibility() {
-    setState(() {
-      _isImageVisible = !_isImageVisible;
-    });
-  }
-
-  // sets target location to inputted coordinates
-  @override
-  void initState() {
-    super.initState();
-    targetLat = _lat = widget.lat;
-    targetLong = _long = widget.long;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
-
 class _FavoriteMapPageState extends State<FavoriteMapPage> {
   static const String _kLocationServicesDisabledMessage =
       'Location services are disabled.';
@@ -175,7 +128,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                             MarkerLayer(
                               markers: [
                                 Marker(
-                                  point: latlong2.LatLng(targetLat, targetLong),
+                                  point: latlong2.LatLng(widget.lat, widget.long),
                                   width: 100,
                                   height: 100,
                                   builder: (context) => const Icon(
@@ -273,7 +226,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   _recenterMapTarget() async {
     if (await _handlePermission()) {
       showMarker = true;
-      _mapController.move(latlong2.LatLng(targetLat, targetLong), 17);
+      _mapController.move(latlong2.LatLng(widget.lat, widget.long), 17);
     }
   }
 
