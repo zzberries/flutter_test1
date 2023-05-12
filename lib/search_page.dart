@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
-import 'package:flutter_workspace/geolocator_test.dart';
+import 'package:flutter_workspace/map_page_live.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
@@ -10,7 +10,9 @@ import 'firestore_collections/Department.dart';
 class SearchPage extends StatefulWidget {
   // Callback function
 
-  const SearchPage({Key? key,}) : super(key: key);
+  const SearchPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -18,19 +20,22 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   bool _acceptedTerms = false;
+
+  @override
   void initState() {
     super.initState();
     // Add a delay before showing the terms dialog button
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Navigation search'),
-            content: Text('While only one field is required, please provide as much information as possible to help us navigate you.'),
+            title: const Text('Navigation search'),
+            content: const Text(
+                'While only one field is required, please provide as much information as possible to help us navigate you.'),
             actions: [
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   setState(() {
                     _acceptedTerms = true; // Update the accepted terms state
@@ -44,8 +49,6 @@ class _SearchPageState extends State<SearchPage> {
       );
     });
   }
-
-
 
   final CollectionReference doctorsRef =
       FirebaseFirestore.instance.collection('departments');
@@ -64,7 +67,6 @@ class _SearchPageState extends State<SearchPage> {
   int _id = 0;
   double _long = 0.0;
 
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -76,7 +78,7 @@ class _SearchPageState extends State<SearchPage> {
             'What is the reason of appointment?',
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
-              textStyle: TextStyle(fontSize: 16),
+              textStyle: const TextStyle(fontSize: 16),
             ),
           ),
         ),
@@ -149,7 +151,7 @@ class _SearchPageState extends State<SearchPage> {
                           'What building are you going to?',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.nunitoSans(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                               fontSize: 16,
                             ),
                           ),
@@ -203,7 +205,7 @@ class _SearchPageState extends State<SearchPage> {
                           'What is the name of the doctor?',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                               fontSize: 16,
                             ),
                           ),
@@ -256,7 +258,7 @@ class _SearchPageState extends State<SearchPage> {
                           'What department are you going to?',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                               fontSize: 16,
                             ),
                           ),
@@ -321,7 +323,8 @@ class _SearchPageState extends State<SearchPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => GeolocatorWidget(),
+                                  builder: (context) =>
+                                      FavoriteMapPage(lat: _lat, long: _long),
                                 ),
                               );
                             }
@@ -344,7 +347,8 @@ class _SearchPageState extends State<SearchPage> {
 
     for (var doc in querySnapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
-      List<dynamic> keywords = data['keyword_list']; // Assuming 'building_name' is an array field
+      List<dynamic> keywords =
+          data['keyword_list']; // Assuming 'building_name' is an array field
 
       for (var name in keywords) {
         String keyword = name.toString();
@@ -357,7 +361,6 @@ class _SearchPageState extends State<SearchPage> {
       _suggestions = suggestions;
     });
   }
-
 
   Future<void> _getLatLong(int buildingid) async {
     final snapshot = await FirebaseFirestore.instance
@@ -395,8 +398,4 @@ class _SearchPageState extends State<SearchPage> {
       print('No data found for department name: $_departmentName');
     }
   }
-
-  
 }
-
-

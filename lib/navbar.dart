@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_workspace/live_map.dart';
-
 import 'announcement_page.dart';
-import 'choice_page.dart';
 import 'search_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,14 +8,12 @@ class Navbar extends StatefulWidget {
 
   final String title;
 
-
   @override
   State<Navbar> createState() => _NavbarState();
 }
 
 class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
 
   @override
   void initState() {
@@ -36,13 +31,13 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent, // Make the app bar transparent
         elevation: 0, // Remove the shadow from the app bar
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blue.shade900, Colors.purple.shade900], // Set the gradient colors
+              colors: [Colors.blue.shade900, Colors.purple.shade900],
+              // Set the gradient colors
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -60,7 +55,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
               'UNav',
               textAlign: TextAlign.right,
               style: GoogleFonts.inter(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                 ),
@@ -74,17 +69,17 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
+              children: const [
                 SearchPage(),
                 AnnouncementPage(),
               ],
             ),
           ),
           Container(
-
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple.shade900, Colors.blue.shade900], // Set the gradient colors
+                colors: [Colors.purple.shade900, Colors.blue.shade900],
+                // Set the gradient colors
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -101,9 +96,12 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                   text: 'Announcements',
                 ),
               ],
-              indicatorColor: Colors.white, // Set the indicator color
-              labelColor: Colors.white, // Set the label color
-              unselectedLabelColor: Colors.white.withOpacity(0.6), // Set the unselected label color
+              indicatorColor: Colors.white,
+              // Set the indicator color
+              labelColor: Colors.white,
+              // Set the label color
+              unselectedLabelColor: Colors.white
+                  .withOpacity(0.6), // Set the unselected label color
             ),
           ),
         ],

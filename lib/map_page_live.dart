@@ -1,27 +1,12 @@
 import 'dart:async';
-
-import 'package:baseflow_plugin_template/baseflow_plugin_template.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_workspace/rotate_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-
-import 'dart:io' show Platform;
-
-import 'geolocator_test.dart';
 import 'search_page.dart';
-import 'main.dart';
-
-import 'dart:math' as math;
-
-void main() {
-  runApp(const FavoriteMapPage(lat: 42.32754, long: -71.679158));
-}
 
 class FavoriteMapPage extends StatefulWidget {
   final double lat;
@@ -37,7 +22,6 @@ class _FavoritesPageState extends State<FavoriteMapPage> {
   double _lat = 0.0;
   double _long = 0.0;
   bool _isImageVisible = false;
-  bool _hasPermissions = false;
 
   CompassEvent? _lastRead;
   DateTime? _lastReadAt;
@@ -56,8 +40,8 @@ class _FavoritesPageState extends State<FavoriteMapPage> {
   late double currentLat = 0;
   late double currentLong = 0;
   late final MapController _mapController;
-  double targetLat = 42.32754;
-  double targetLong = -71.679158;
+  double targetLat = 42.2775;
+  double targetLong = -71.7617;
 
   // toggles whether the image of the target building or the map/compass is displayed
   void _toggleImageVisibility() {
@@ -95,13 +79,12 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool positionStreamStarted = false;
   bool _isImageVisible = false;
-  CompassEvent? _lastRead;
   DateTime? _lastReadAt;
   late double currentLat = 0;
   late double currentLong = 0;
   late final MapController _mapController;
-  double targetLat = 42.32754;
-  double targetLong = -71.679158;
+  double targetLat = 42.2775;
+  double targetLong = -71.7617;
   bool showMarker = false;
 
   @override
@@ -116,59 +99,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     });
   }
 
-  Widget _buildCompass() {
-    // builds compass
-    return StreamBuilder<CompassEvent>(
-      stream: FlutterCompass.events,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error reading heading: ${snapshot.error}');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        double? direction = snapshot.data!.heading;
-
-        // if direction is null, then device does not support this sensor
-        // show error message
-        if (direction == null) {
-          return const Center(
-            child: Text("Device does not have sensors !"),
-          );
-        }
-
-        return SizedBox(
-          width: 150,
-          height: 150,
-          child: Material(
-            shape: const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
-            elevation: 4.0,
-            child: Container(
-              padding: const EdgeInsets.all(5.0),
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Transform.rotate(
-                angle: (direction * (math.pi / 180) * -1),
-                child: Image.asset(
-                  'assets/compass.png',
-                  height: 150,
-                  width: 150,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
+  // builds the map
   Widget _buildMap(BuildContext context) {
     // builds the map
 
@@ -176,17 +107,15 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     double? lat = 42.27507; // south road parking garage
     double? lng = -71.76205;
 
+    // checks if current location was updated and if so, updates lat and lng accordingly
     if (currentLat != 0) {
       lat = currentLat;
       lng = currentLong;
     }
 
     final coordinates = [LatLng(lat, lng)];
-    final coordinatesTarget = [
-      const LatLng(42.27748, -71.7642),
-      LatLng(lat, lng)
-    ];
 
+    // calculates the bounds for the default orientation/location of the map
     final bounds = LatLngBounds.fromPoints(coordinates
         .map((location) =>
             latlong2.LatLng(location.latitude, location.longitude))
@@ -197,7 +126,10 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('You are here right now!'),
+        title: const Text(
+            "Inputted: <building name>, <doctor name>\nHead to floor <Floor #>",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18)),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
@@ -211,17 +143,6 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                   //CurrentLocation(mapController: _mapController),
-                  const Text(
-                      "Inputted: <building name>, <doctor name>\nHead to floor <Floor #>",
-                      textAlign: TextAlign.center),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () => _toggleImageVisibility(),
-                    //onPressed: () {
-                    //   _isImageVisible = !_isImageVisible;
-
-                    child: const Text('Toggle Image'),
-                  ),
                   if (_isImageVisible)
                     SizedBox(
                       width: 600,
@@ -229,49 +150,46 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                       child: Image.asset('assets/UMass_Img.jpg'),
                     ),
                   if (!_isImageVisible)
-                    Stack(
-                      children: <Widget>[
-                        Container(
-                          constraints: const BoxConstraints(maxHeight: 600),
-                          child: FlutterMap(
-                            mapController: _mapController,
-                            options: MapOptions(
-                              bounds: bounds,
-                              boundsOptions: FitBoundsOptions(
-                                padding: EdgeInsets.only(
-                                  left: padding,
-                                  top: padding +
-                                      MediaQuery.of(context).padding.top,
-                                  right: padding,
-                                  bottom: padding,
-                                ),
+                    Expanded(
+                      child: Container(
+                        constraints: const BoxConstraints(maxHeight: 600),
+                        child: FlutterMap(
+                          mapController: _mapController,
+                          options: MapOptions(
+                            bounds: bounds,
+                            boundsOptions: FitBoundsOptions(
+                              padding: EdgeInsets.only(
+                                left: padding,
+                                top: padding +
+                                    MediaQuery.of(context).padding.top,
+                                right: padding,
+                                bottom: padding,
                               ),
                             ),
-                            nonRotatedChildren: [
-                              TileLayer(
-                                urlTemplate:
-                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              ),
-                                MarkerLayer(
-                                  markers: [
-                                    Marker(
-                                      point: latlong2.LatLng(
-                                          targetLat, targetLong),
-                                      width: 100,
-                                      height: 100,
-                                      builder: (context) => const Icon(
-                                        Icons.star,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                CurrentLocationLayer()
-                            ],
                           ),
+                          nonRotatedChildren: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                Marker(
+                                  point: latlong2.LatLng(targetLat, targetLong),
+                                  width: 100,
+                                  height: 100,
+                                  builder: (context) => const Icon(
+                                    Icons.star,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            CurrentLocationLayer()
+                          ],
                         ),
-                        //Expanded(child: _buildCompass()),
-                      ],
+                      ),
+                      //Expanded(child: _buildCompass()),
                     )
                 ]))),
       ]),
@@ -284,6 +202,11 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       height: 10,
     );
 
+    IconData icon = Icons.photo;
+    if (_isImageVisible) {
+      icon = Icons.map;
+    }
+    // buttons to recenter the map and go back to the previous page
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: _buildMap(context),
@@ -292,8 +215,18 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: _recenterMap, //_getCurrentPosition,
+            onPressed: _recenterMap,
             child: const Icon(Icons.my_location),
+          ),
+          sizedBox,
+          FloatingActionButton(
+            onPressed: _recenterMapTarget,
+            child: const Icon(Icons.star),
+          ),
+          sizedBox,
+          FloatingActionButton(
+            onPressed: _toggleImageVisibility,
+            child: Icon(icon),
           ),
           sizedBox,
           FloatingActionButton(
@@ -302,7 +235,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
             onPressed: () {
               Navigator.pop(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage()),
+                MaterialPageRoute(builder: (context) => const SearchPage()),
               );
             },
             child: const Icon(Icons.arrow_back),
@@ -330,9 +263,17 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
 
   // recenters the map around the current location
   _recenterMap() async {
-    if(await _handlePermission()) {
+    if (await _handlePermission()) {
       showMarker = true;
       _mapController.move(latlong2.LatLng(currentLat, currentLong), 17);
+    }
+  }
+
+  // recenters the map around the target location
+  _recenterMapTarget() async {
+    if (await _handlePermission()) {
+      showMarker = true;
+      _mapController.move(latlong2.LatLng(targetLat, targetLong), 17);
     }
   }
 

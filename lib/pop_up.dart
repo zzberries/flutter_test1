@@ -4,6 +4,8 @@ import 'package:flutter_workspace/search_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OpeningPage extends StatefulWidget {
+  const OpeningPage({super.key});
+
   @override
   _OpeningPageState createState() => _OpeningPageState();
 }
