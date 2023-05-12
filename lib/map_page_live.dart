@@ -175,7 +175,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                             MarkerLayer(
                               markers: [
                                 Marker(
-                                  point: latlong2.LatLng(targetLat, targetLong),
+                                  point: latlong2.LatLng(widget.lat, widget.long),
                                   width: 100,
                                   height: 100,
                                   builder: (context) => const Icon(
@@ -273,7 +273,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   _recenterMapTarget() async {
     if (await _handlePermission()) {
       showMarker = true;
-      _mapController.move(latlong2.LatLng(targetLat, targetLong), 17);
+      _mapController.move(latlong2.LatLng(widget.lat, widget.long), 17);
     }
   }
 
