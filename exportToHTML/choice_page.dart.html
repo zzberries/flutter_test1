@@ -1,0 +1,190 @@
+<html>
+<head>
+<title>choice_page.dart</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+.s1 { color: #6a8759;}
+.s2 { color: #cc7832;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+choice_page.dart</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">'package:cloud_firestore/cloud_firestore.dart'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">'package:firebase_storage/firebase_storage.dart'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">'package:flutter/material.dart'</span><span class="s2">;</span>
+
+<span class="s2">class </span><span class="s0">ChoicePage </span><span class="s2">extends </span><span class="s0">StatefulWidget {</span>
+  <span class="s2">final </span><span class="s0">String buildingName</span><span class="s2">;</span>
+  <span class="s2">final </span><span class="s0">String doctorName</span><span class="s2">;</span>
+  <span class="s2">final </span><span class="s0">String departmentName</span><span class="s2">;</span>
+
+
+  <span class="s2">const </span><span class="s0">ChoicePage(</span>
+      <span class="s0">{</span><span class="s2">super</span><span class="s0">.key</span><span class="s2">,</span>
+        <span class="s0">required </span><span class="s2">this</span><span class="s0">.buildingName</span><span class="s2">,</span>
+        <span class="s0">required </span><span class="s2">this</span><span class="s0">.doctorName</span><span class="s2">,</span>
+        <span class="s0">required </span><span class="s2">this</span><span class="s0">.departmentName})</span><span class="s2">;</span>
+
+  <span class="s0">@override</span>
+  <span class="s0">ChoicePageState createState() =&gt; ChoicePageState()</span><span class="s2">;</span>
+<span class="s0">}</span>
+
+<span class="s2">class </span><span class="s0">ChoicePageState </span><span class="s2">extends </span><span class="s0">State&lt;ChoicePage&gt; {</span>
+  <span class="s0">List&lt;Article&gt; _articles = []</span><span class="s2">;</span>
+  <span class="s0">int _id = </span><span class="s3">0</span><span class="s2">;</span>
+
+  <span class="s0">@override</span>
+  <span class="s2">void </span><span class="s0">initState() {</span>
+    <span class="s2">super</span><span class="s0">.initState()</span><span class="s2">;</span>
+    <span class="s0">loadArticles(departmentName)</span><span class="s2">;</span>
+  <span class="s0">}</span>
+
+  <span class="s0">@override</span>
+  <span class="s0">Widget build(BuildContext context) {</span>
+    <span class="s2">return </span><span class="s0">Scaffold(</span>
+      <span class="s0">body: Center(</span>
+        <span class="s0">child: Container(</span>
+          <span class="s0">constraints: </span><span class="s2">const </span><span class="s0">BoxConstraints(maxWidth: </span><span class="s3">400</span><span class="s0">)</span><span class="s2">,</span>
+          <span class="s0">child: ListView.builder(</span>
+            <span class="s0">itemCount: _articles.length</span><span class="s2">,</span>
+            <span class="s0">itemBuilder: (BuildContext context</span><span class="s2">, </span><span class="s0">int index) {</span>
+              <span class="s2">final </span><span class="s0">item = _articles[index]</span><span class="s2">;</span>
+              <span class="s2">return </span><span class="s0">Container(</span>
+                <span class="s0">height: </span><span class="s3">136</span><span class="s2">,</span>
+                <span class="s0">margin:</span>
+                <span class="s2">const </span><span class="s0">EdgeInsets.symmetric(horizontal: </span><span class="s3">16</span><span class="s2">, </span><span class="s0">vertical: </span><span class="s3">8.0</span><span class="s0">)</span><span class="s2">,</span>
+                <span class="s0">decoration: BoxDecoration(</span>
+                    <span class="s0">border: Border.all(color: </span><span class="s2">const </span><span class="s0">Color(</span><span class="s3">0xFFE0E0E0</span><span class="s0">))</span><span class="s2">,</span>
+                    <span class="s0">borderRadius: BorderRadius.circular(</span><span class="s3">8.0</span><span class="s0">))</span><span class="s2">,</span>
+                <span class="s0">padding: </span><span class="s2">const </span><span class="s0">EdgeInsets.all(</span><span class="s3">8</span><span class="s0">)</span><span class="s2">,</span>
+                <span class="s0">child: Row(</span>
+                  <span class="s0">children: [</span>
+                    <span class="s0">Expanded(</span>
+                        <span class="s0">child: Column(</span>
+                          <span class="s0">mainAxisAlignment: MainAxisAlignment.center</span><span class="s2">,</span>
+                          <span class="s0">crossAxisAlignment: CrossAxisAlignment.start</span><span class="s2">,</span>
+                          <span class="s0">children: [</span>
+                            <span class="s0">Text(</span>
+                              <span class="s0">item.title</span><span class="s2">,</span>
+                              <span class="s0">style: </span><span class="s2">const </span><span class="s0">TextStyle(fontWeight: FontWeight.bold)</span><span class="s2">,</span>
+                              <span class="s0">maxLines: </span><span class="s3">2</span><span class="s2">,</span>
+                              <span class="s0">overflow: TextOverflow.ellipsis</span><span class="s2">,</span>
+                            <span class="s0">)</span><span class="s2">,</span>
+                            <span class="s2">const </span><span class="s0">SizedBox(height: </span><span class="s3">8</span><span class="s0">)</span><span class="s2">,</span>
+                            <span class="s0">Text(</span><span class="s1">&quot;</span><span class="s0">${item.author} </span><span class="s1">· </span><span class="s0">${item.postedOn}</span><span class="s1">&quot;</span><span class="s2">,</span>
+                                <span class="s0">style: Theme.of(context).textTheme.bodySmall)</span><span class="s2">,</span>
+                            <span class="s2">const </span><span class="s0">SizedBox(height: </span><span class="s3">8</span><span class="s0">)</span><span class="s2">,</span>
+                            <span class="s0">Row(</span>
+                              <span class="s0">mainAxisSize: MainAxisSize.min</span><span class="s2">,</span>
+                              <span class="s0">children: [</span>
+                                <span class="s0">Icons.bookmark_border_rounded</span><span class="s2">,</span>
+                                <span class="s0">Icons.share</span><span class="s2">,</span>
+                                <span class="s0">Icons.more_vert</span>
+                              <span class="s0">].map((e) {</span>
+                                <span class="s2">return </span><span class="s0">InkWell(</span>
+                                  <span class="s0">onTap: () {}</span><span class="s2">,</span>
+                                  <span class="s0">child: Padding(</span>
+                                    <span class="s0">padding: </span><span class="s2">const </span><span class="s0">EdgeInsets.only(right: </span><span class="s3">8.0</span><span class="s0">)</span><span class="s2">,</span>
+                                    <span class="s0">child: Icon(e</span><span class="s2">, </span><span class="s0">size: </span><span class="s3">16</span><span class="s0">)</span><span class="s2">,</span>
+                                  <span class="s0">)</span><span class="s2">,</span>
+                                <span class="s0">)</span><span class="s2">;</span>
+                              <span class="s0">}).toList()</span><span class="s2">,</span>
+                            <span class="s0">)</span>
+                          <span class="s0">]</span><span class="s2">,</span>
+                        <span class="s0">))</span><span class="s2">,</span>
+                    <span class="s0">Container(</span>
+                        <span class="s0">width: </span><span class="s3">100</span><span class="s2">,</span>
+                        <span class="s0">height: </span><span class="s3">100</span><span class="s2">,</span>
+                        <span class="s0">decoration: BoxDecoration(</span>
+                            <span class="s0">color: Colors.grey</span><span class="s2">,</span>
+                            <span class="s0">borderRadius: BorderRadius.circular(</span><span class="s3">8.0</span><span class="s0">)</span><span class="s2">,</span>
+                            <span class="s0">image: DecorationImage(</span>
+                              <span class="s0">fit: BoxFit.cover</span><span class="s2">,</span>
+                              <span class="s0">image: NetworkImage(item.imageUrl)</span><span class="s2">,</span>
+                            <span class="s0">)))</span><span class="s2">,</span>
+                  <span class="s0">]</span><span class="s2">,</span>
+                <span class="s0">)</span><span class="s2">,</span>
+              <span class="s0">)</span><span class="s2">;</span>
+            <span class="s0">}</span><span class="s2">,</span>
+          <span class="s0">)</span><span class="s2">,</span>
+        <span class="s0">)</span><span class="s2">,</span>
+      <span class="s0">)</span><span class="s2">,</span>
+    <span class="s0">)</span><span class="s2">;</span>
+  <span class="s0">}</span>
+
+  <span class="s0">Future&lt;</span><span class="s2">void</span><span class="s0">&gt; loadArticles() async {</span>
+    <span class="s0">_articles = []</span><span class="s2">;</span>
+    <span class="s0">await _getDepartmentId(departmentName)</span><span class="s2">;</span>
+    <span class="s2">final </span><span class="s0">querySnapshot = await FirebaseFirestore.instance</span>
+        <span class="s0">.collection(</span><span class="s1">'buildings'</span><span class="s0">)</span>
+        <span class="s0">.where(</span><span class="s1">'department_list'</span><span class="s2">, </span><span class="s0">arrayContains: _id)</span>
+        <span class="s0">.get()</span><span class="s2">;</span>
+    <span class="s2">final </span><span class="s0">articleList = &lt;Article&gt;[]</span><span class="s2">;</span>
+    <span class="s2">for </span><span class="s0">(</span><span class="s2">final </span><span class="s0">documentSnapshot </span><span class="s2">in </span><span class="s0">querySnapshot.docs) {</span>
+      <span class="s2">final </span><span class="s0">buildingName = documentSnapshot.get(</span><span class="s1">'building_name'</span><span class="s0">)</span><span class="s2">;</span>
+      <span class="s2">final </span><span class="s0">campus = documentSnapshot.get(</span><span class="s1">'campus'</span><span class="s0">)</span><span class="s2">;</span>
+      <span class="s2">final </span><span class="s0">article = Article(</span>
+        <span class="s0">title: buildingName</span><span class="s2">,</span>
+        <span class="s0">author: campus</span><span class="s2">,</span>
+        <span class="s0">imageUrl: </span><span class="s1">'https://picsum.photos/id/1010/960/540'</span><span class="s2">,</span>
+        <span class="s0">postedOn: DateTime.now()</span><span class="s2">,</span>
+      <span class="s0">)</span><span class="s2">;</span>
+      <span class="s0">articleList.add(article)</span><span class="s2">;</span>
+    <span class="s0">}</span>
+
+    <span class="s0">setState(() {</span>
+      <span class="s0">_articles = articleList</span><span class="s2">;</span>
+    <span class="s0">})</span><span class="s2">;</span>
+  <span class="s0">}</span>
+
+  <span class="s0">Future&lt;</span><span class="s2">void</span><span class="s0">&gt; _getDepartmentId(String _departmentName) async {</span>
+    <span class="s2">final </span><span class="s0">snapshot = await FirebaseFirestore.instance</span>
+        <span class="s0">.collection(</span><span class="s1">'departments'</span><span class="s0">)</span>
+        <span class="s0">.where(</span><span class="s1">'department_name'</span><span class="s2">, </span><span class="s0">isEqualTo: _departmentName)</span>
+        <span class="s0">.get()</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s0">(snapshot.size &gt; </span><span class="s3">0</span><span class="s0">) {</span>
+      <span class="s2">final </span><span class="s0">data = snapshot.docs[</span><span class="s3">0</span><span class="s0">].data()</span><span class="s2">;</span>
+      <span class="s2">final </span><span class="s0">id = data[</span><span class="s1">'department_id'</span><span class="s0">].toInt()</span><span class="s2">;</span>
+      <span class="s0">setState(() {</span>
+        <span class="s0">_id = id</span><span class="s2">;</span>
+      <span class="s0">})</span><span class="s2">;</span>
+      <span class="s0">print(</span><span class="s1">'Department Id: </span><span class="s0">$_id</span><span class="s1">'</span><span class="s0">)</span><span class="s2">;</span>
+    <span class="s0">} </span><span class="s2">else </span><span class="s0">{</span>
+      <span class="s0">print(</span><span class="s1">'No data found for department name: </span><span class="s0">$departmentName</span><span class="s1">'</span><span class="s0">)</span><span class="s2">;</span>
+    <span class="s0">}</span>
+  <span class="s0">}</span>
+
+
+<span class="s0">}</span>
+
+<span class="s2">class </span><span class="s0">Article {</span>
+  <span class="s0">String title</span><span class="s2">;</span>
+  <span class="s0">String author</span><span class="s2">;</span>
+  <span class="s0">String imageUrl</span><span class="s2">;</span>
+  <span class="s0">DateTime postedOn</span><span class="s2">;</span>
+
+
+  <span class="s0">Article({</span>
+    <span class="s0">required </span><span class="s2">this</span><span class="s0">.title</span><span class="s2">,</span>
+    <span class="s0">required </span><span class="s2">this</span><span class="s0">.author</span><span class="s2">,</span>
+    <span class="s0">required </span><span class="s2">this</span><span class="s0">.postedOn</span><span class="s2">,</span>
+    <span class="s0">required </span><span class="s2">this</span><span class="s0">.imageUrl</span><span class="s2">,</span>
+  <span class="s0">})</span><span class="s2">;</span>
+<span class="s0">}</span>
+
+
+
+
+
+
+
+
+</pre>
+</body>
+</html>
