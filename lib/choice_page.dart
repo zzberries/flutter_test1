@@ -115,6 +115,18 @@ class _ChoicePageState extends State<ChoicePage> {
           ),
         ),
       ),
+      floatingActionButton:
+      FloatingActionButton(
+        hoverColor: Colors.purple,
+        backgroundColor: Colors.blue,
+        onPressed: () {
+          Navigator.pop(
+            context,
+            MaterialPageRoute(builder: (context) => const SearchPage()),
+          );
+        },
+        child: const Icon(Icons.arrow_back),
+      ),
     );
   }
 

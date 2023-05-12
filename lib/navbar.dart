@@ -59,7 +59,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
               'UNav',
               textAlign: TextAlign.right,
               style: GoogleFonts.inter(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                 ),
@@ -73,7 +73,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
+              children: const [
                 SearchPage(),
                 AnnouncementPage(),
               ],
