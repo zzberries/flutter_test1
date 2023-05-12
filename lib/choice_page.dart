@@ -13,7 +13,8 @@ class ChoicePage extends StatefulWidget {
   final int departmentID;
 
   const ChoicePage(
-      {super.key,
+      {
+        super.key,
         required this.buildingID,
         required this.doctorID,
         required this.departmentID});

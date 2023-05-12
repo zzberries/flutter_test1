@@ -1,71 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_workspace/live_map.dart';
+import 'package:flutter_workspace/pop_up.dart';
 import 'announcement_page.dart';
+import 'choice_page.dart';
 import 'search_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Navbar extends StatefulWidget {
-  const Navbar({super.key, required this.title});
+  const Navbar({Key? key, required this.title}) : super(key: key);
 
   final String title;
+
 
   @override
   State<Navbar> createState() => _NavbarState();
 }
 
-class _NavbarState extends State<Navbar> {
-  var selectedIndex = 0;
+class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = const SearchPage();
-        break;
-      case 1:
-        page = const AnnouncementPage();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Row(
-          children: [
-            SafeArea(
-              child: NavigationRail(
-                extended: constraints.maxWidth >= 600,
-                destinations: const [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text('Home'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.announcement),
-                    label: Text('Announcements'),
-                  ),
-                ],
-                selectedIndex: selectedIndex,
-                onDestinationSelected: (value) {
-                  setState(() {
-                    selectedIndex = value;
-                  });
-                },
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent, // Make the app bar transparent
+        elevation: 0, // Remove the shadow from the app bar
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade900, Colors.purple.shade900], // Set the gradient colors
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            Expanded(
-              child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: page,
+          ),
+        ),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/ULogo.png',
+              width: 80,
+              height: 80,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'UNav',
+              textAlign: TextAlign.right,
+              style: GoogleFonts.inter(
+                textStyle: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
         ),
-      );
-    });
-  }
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                SearchPage(),
+                AnnouncementPage(),
+              ],
+            ),
+          ),
+          Container(
 
-// This trailing comma makes auto-formatting nicer for build methods.
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.purple.shade900, Colors.blue.shade900], // Set the gradient colors
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(
+                  icon: Icon(Icons.search),
+                  text: 'Search',
+                ),
+                Tab(
+                  icon: Icon(Icons.announcement),
+                  text: 'Announcements',
+                ),
+              ],
+              indicatorColor: Colors.white, // Set the indicator color
+              labelColor: Colors.white, // Set the label color
+              unselectedLabelColor: Colors.white.withOpacity(0.6), // Set the unselected label color
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

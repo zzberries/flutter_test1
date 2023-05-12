@@ -2,22 +2,53 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 import 'package:flutter_workspace/geolocator_test.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
 
-
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  // Callback function
+
+  const SearchPage({Key? key,}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
+  bool _acceptedTerms = false;
+  void initState() {
+    super.initState();
+    // Add a delay before showing the terms dialog button
+    Future.delayed(Duration(seconds: 2), () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Navigation search'),
+            content: Text('While only one field is required, please provide as much information as possible to help us navigate you.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  setState(() {
+                    _acceptedTerms = true; // Update the accepted terms state
+                  });
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+
+
   final CollectionReference doctorsRef =
-  FirebaseFirestore.instance.collection('buildings');
+      FirebaseFirestore.instance.collection('buildings');
   List<String> _suggestions = [];
   TextEditingController _searchController = TextEditingController();
   bool _isTextFieldFilled = false;
@@ -31,72 +62,79 @@ class _SearchPageState extends State<SearchPage> {
 
   double _lat = 0.0;
   int _id = 0;
-
   double _long = 0.0;
+
 
   @override
   Widget build(BuildContext context) {
     return Material(
         child: Column(
-          children: [
-            const Text('What is the reason of appointment?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16, // set the font size to 16
-                )),
-            Container(
-              margin: const EdgeInsets.all(24),
-              padding: const EdgeInsets.all(5),
-              child: Stack(
-                children: [
-                  TextField(
-                    controller: _searchController,
-                    onTap: () {
-                      setState(() {
-                        _isTextFieldFilled = true;
-                      });
-                    },
-                    onChanged: (value) {
-                      _getSuggestions(value);
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'Search buildings',
-                      border: OutlineInputBorder(),
-                      suffixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                  Visibility(
-                    visible: _isTextFieldFilled,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isTextFieldFilled = false;
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 60),
-                        height: 100,
-                        child: ListView.builder(
-                          itemCount: _suggestions.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(_suggestions[index]),
-                              onTap: () {
-                                setState(() {
-                                  _searchController.text = _suggestions[index];
-                                  _isTextFieldFilled = false;
-                                });
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: Text(
+            'What is the reason of appointment?',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              textStyle: TextStyle(fontSize: 16),
             ),
-            Column(
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(5),
+          child: Stack(
+            children: [
+              TextField(
+                controller: _searchController,
+                onTap: () {
+                  setState(() {
+                    _isTextFieldFilled = true;
+                  });
+                },
+                onChanged: (value) {
+                  _getSuggestions(value);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Search buildings',
+                  border: OutlineInputBorder(),
+                  suffixIcon: Icon(Icons.search),
+                ),
+              ),
+              Visibility(
+                visible: _isTextFieldFilled,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isTextFieldFilled = false;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 60),
+                    height: 100,
+                    child: ListView.builder(
+                      itemCount: _suggestions.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(_suggestions[index]),
+                          onTap: () {
+                            setState(() {
+                              _searchController.text = _suggestions[index];
+                              _isTextFieldFilled = false;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
@@ -105,17 +143,24 @@ class _SearchPageState extends State<SearchPage> {
                   width: 400,
                   child: Column(
                     children: [
-                      const Text('What building are you going to?',
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: Text(
+                          'What building are you going to?',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          )),
+                          style: GoogleFonts.nunitoSans(
+                            textStyle: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('buildings')
                             .withConverter(
-                            fromFirestore: Building.fromFirestore,
-                            toFirestore: (Building d, _) => d.toFirestore())
+                                fromFirestore: Building.fromFirestore,
+                                toFirestore: (Building d, _) => d.toFirestore())
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
@@ -123,7 +168,8 @@ class _SearchPageState extends State<SearchPage> {
                           }
                           return DropdownButton(
                             items: [
-                              const DropdownMenuItem(value: -1, child: Text('N/A')),
+                              const DropdownMenuItem(
+                                  value: -1, child: Text('N/A')),
                               ...snapshot.data!.docs.map((e) {
                                 var d = e.data();
                                 return DropdownMenuItem(
@@ -151,17 +197,24 @@ class _SearchPageState extends State<SearchPage> {
                   width: 400,
                   child: Column(
                     children: [
-                      const Text('What is the name of your doctor?',
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: Text(
+                          'What is the name of the doctor?',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          )),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('doctors')
                             .withConverter(
-                            fromFirestore: Doctor.fromFirestore,
-                            toFirestore: (Doctor d, _) => d.toFirestore())
+                                fromFirestore: Doctor.fromFirestore,
+                                toFirestore: (Doctor d, _) => d.toFirestore())
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
@@ -169,7 +222,8 @@ class _SearchPageState extends State<SearchPage> {
                           }
                           return DropdownButton(
                             items: [
-                              const DropdownMenuItem(value: -1, child: Text('N/A')),
+                              const DropdownMenuItem(
+                                  value: -1, child: Text('N/A')),
                               ...snapshot.data!.docs.map((e) {
                                 var d = e.data();
                                 return DropdownMenuItem(
@@ -196,17 +250,25 @@ class _SearchPageState extends State<SearchPage> {
                   width: 400,
                   child: Column(
                     children: [
-                      const Text('What department are you going to?',
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: Text(
+                          'What department are you going to?',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          )),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('departments')
                             .withConverter(
-                            fromFirestore: Department.fromFirestore,
-                            toFirestore: (Department d, _) => d.toFirestore())
+                                fromFirestore: Department.fromFirestore,
+                                toFirestore: (Department d, _) =>
+                                    d.toFirestore())
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
@@ -214,7 +276,8 @@ class _SearchPageState extends State<SearchPage> {
                           }
                           return DropdownButton(
                             items: [
-                              const DropdownMenuItem(value: -1, child: Text('N/A')),
+                              const DropdownMenuItem(
+                                  value: -1, child: Text('N/A')),
                               ...snapshot.data!.docs.map((e) {
                                 var d = e.data();
                                 return DropdownMenuItem(
@@ -240,37 +303,39 @@ class _SearchPageState extends State<SearchPage> {
                   margin: const EdgeInsets.all(24),
                   child: ElevatedButton(
                     onPressed: !(_doctorID == -1 &&
-                        _departmentID == -1 &&
-                        _buildingID == -1)
+                            _departmentID == -1 &&
+                            _buildingID == -1)
                         ? () {
-                      if (_departmentID != -1 && _buildingID == -1) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChoicePage(
-                              buildingID: _buildingID,
-                              departmentID: _departmentID,
-                              doctorID: _doctorID,
-                            ),
-                          ),
-                        );
-                      } else if (_buildingID != -1) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GeolocatorWidget(),
-                          ),
-                        );
-                      }
-                    }
+                            if (_departmentID != -1 && _buildingID == -1) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChoicePage(
+                                    buildingID: _buildingID,
+                                    departmentID: _departmentID,
+                                    doctorID: _doctorID,
+                                  ),
+                                ),
+                              );
+                            } else if (_buildingID != -1) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GeolocatorWidget(),
+                                ),
+                              );
+                            }
+                          }
                         : null,
                     child: const Text('Next'),
                   ),
                 ),
               ],
             ),
-          ],
-        ));
+          ),
+        ),
+      ],
+    ));
   }
 
   void _getSuggestions(String query) async {

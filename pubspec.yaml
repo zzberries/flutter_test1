@@ -79,6 +79,8 @@ flutter:
     - assets/UMass_Img.webp
     - assets/compass.png
     - assets/UMass_Img.jpg
+    - assets/ULogo.png
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
