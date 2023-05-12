@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_workspace/firestore_collections/Doctor.dart';
 import 'package:flutter_workspace/map_page_live.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SearchPage extends StatefulWidget {
   // Callback function
@@ -24,29 +27,40 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    // Add a delay before showing the terms dialog button
-    Future.delayed(const Duration(seconds: 2), () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Navigation search'),
-            content: const Text(
-                'While only one field is required, please provide as much information as possible to help us navigate you.'),
-            actions: [
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  setState(() {
-                    _acceptedTerms = true; // Update the accepted terms state
-                  });
-                  Navigator.of(context).pop(); // Close the dialog
-                },
-              ),
-            ],
-          );
-        },
-      );
+
+    SharedPreferences.getInstance().then((prefs) {
+      final int dialogOpen = prefs.getInt('dialog_open') ?? 0;
+      if (dialogOpen == 0) {
+        //show dialog for one time only
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          // Add a delay before showing the terms dialog button
+          Future.delayed(const Duration(seconds: 2), () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Navigation search'),
+                  content: const Text(
+                      'While only one field is required, please provide as much information as possible to help us navigate you.'),
+                  actions: [
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        setState(() {
+                          _acceptedTerms =
+                              true; // Update the accepted terms state
+                        });
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          });
+          prefs.setInt("dialog_open", 1);
+        });
+      }
     });
   }
 
@@ -168,12 +182,23 @@ class _SearchPageState extends State<SearchPage> {
                           if (!snapshot.hasData) {
                             return const CircularProgressIndicator();
                           }
+
+                          var buildings =
+                              snapshot.data!.docs.map((e) => e.data()).toList();
+
+                          if (_departmentID != -1) {
+                            buildings = buildings
+                                .where((building) => building.departmentList
+                                    .contains(_departmentID))
+                                .toList();
+                          }
+
                           return DropdownButton(
                             items: [
                               const DropdownMenuItem(
                                   value: -1, child: Text('N/A')),
-                              ...snapshot.data!.docs.map((e) {
-                                var d = e.data();
+                              ...buildings.map((d) {
+                                //var d = e.data();
                                 return DropdownMenuItem(
                                   value: d.buildingID,
                                   child: Text(d.buildingName),
@@ -276,12 +301,23 @@ class _SearchPageState extends State<SearchPage> {
                           if (!snapshot.hasData) {
                             return const CircularProgressIndicator();
                           }
+
+                          var departments =
+                              snapshot.data!.docs.map((e) => e.data()).toList();
+
+                          if (_buildingID != -1) {
+                            departments = departments
+                                .where((building) =>
+                                    building.buildingList.contains(_buildingID))
+                                .toList();
+                          }
+
                           return DropdownButton(
                             items: [
                               const DropdownMenuItem(
                                   value: -1, child: Text('N/A')),
-                              ...snapshot.data!.docs.map((e) {
-                                var d = e.data();
+                              ...departments.map((d) {
+                                //var d = e.data();
                                 return DropdownMenuItem(
                                   value: d.departmentID,
                                   child: Text(d.departmentName),
