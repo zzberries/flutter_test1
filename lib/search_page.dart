@@ -48,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
 
 
   final CollectionReference doctorsRef =
-      FirebaseFirestore.instance.collection('buildings');
+      FirebaseFirestore.instance.collection('departments');
   List<String> _suggestions = [];
   TextEditingController _searchController = TextEditingController();
   bool _isTextFieldFilled = false;
@@ -96,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
                   _getSuggestions(value);
                 },
                 decoration: const InputDecoration(
-                  hintText: 'Search buildings',
+                  hintText: 'Search reason for appointment',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.search),
                 ),
@@ -340,21 +340,24 @@ class _SearchPageState extends State<SearchPage> {
 
   void _getSuggestions(String query) async {
     List<String> suggestions = [];
-    QuerySnapshot querySnapshot = await doctorsRef
-        .where('building_name', isGreaterThanOrEqualTo: query)
-        .get();
+    QuerySnapshot querySnapshot = await doctorsRef.get();
+
     for (var doc in querySnapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
-      String buildingName = data['building_name'];
-      if (buildingName.toLowerCase().contains(query.toLowerCase())) {
-        suggestions.add(buildingName);
+      List<dynamic> keywords = data['keyword_list']; // Assuming 'building_name' is an array field
+
+      for (var name in keywords) {
+        String keyword = name.toString();
+        if (keyword.toLowerCase().contains(query.toLowerCase())) {
+          suggestions.add(keyword);
+        }
       }
     }
-
     setState(() {
       _suggestions = suggestions;
     });
   }
+
 
   Future<void> _getLatLong(int buildingid) async {
     final snapshot = await FirebaseFirestore.instance
@@ -392,4 +395,8 @@ class _SearchPageState extends State<SearchPage> {
       print('No data found for department name: $_departmentName');
     }
   }
+
+  
 }
+
+
