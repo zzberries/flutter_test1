@@ -9,6 +9,7 @@ class Building {
   final double lat;
   final double long;
   final List departmentList;
+  final List doctorList;
 
   /// Creates a building with a given [buildingID], [buildingName], [campus], coordinates of [lat] and [long], and [departmentList].
   Building({
@@ -18,6 +19,7 @@ class Building {
     required this.lat,
     required this.long,
     required this.departmentList,
+    required this.doctorList,
   });
 
   /// Converts a [DocumentSnapshot] from Firestore into a [Building] object.
@@ -33,6 +35,7 @@ class Building {
       lat: data?['lat'],
       long: data?['long'],
       departmentList: data?['department_list'],
+      doctorList: data?['doctor_list'],
     ); //Building
   }
 
@@ -45,6 +48,7 @@ class Building {
       "lat": lat,
       "long": long,
       "department_list": departmentList,
+      "doctor_list": doctorList,
     };
   }
 }

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
-import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'search_page.dart';
 
@@ -16,6 +16,7 @@ class FavoriteMapPage extends StatefulWidget {
   final int departmentId;
   final int doctorId;
 
+
   const FavoriteMapPage({super.key, required this.lat, required this.long, required this.buildingId, required this.departmentId, required this.doctorId});
 
   @override
@@ -23,20 +24,11 @@ class FavoriteMapPage extends StatefulWidget {
 }
 
 class _FavoriteMapPageState extends State<FavoriteMapPage> {
-  static const String _kLocationServicesDisabledMessage =
-      'Location services are disabled.';
-  static const String _kPermissionDeniedMessage = 'Permission denied.';
-  static const String _kPermissionDeniedForeverMessage =
-      'Permission denied forever.';
-  static const String _kPermissionGrantedMessage = 'Permission granted.';
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
-
   StreamSubscription<Position>? _positionStreamSubscription;
-  StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool positionStreamStarted = false;
   bool _isImageVisible = false;
-  DateTime? _lastReadAt;
   late double currentLat = 0;
   late double currentLong = 0;
   late final MapController _mapController;
@@ -46,6 +38,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   String doctorName = "N/A";
   String floorName = "N/A";
   bool showMarker = false;
+  String img = "";
 
   @override
   void initState()  {
@@ -54,11 +47,14 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     _fetchData();
   }
 
+  // toggles between displaying the image of the building and the map
   void _toggleImageVisibility() {
     setState(() {
       _isImageVisible = !_isImageVisible;
     });
   }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _fetchData();
@@ -68,6 +64,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     await _getDoctorName(widget.doctorId);
     await _getFloorName(widget.doctorId);
     await _getBuildingName(widget.buildingId);
+    await _getImage(widget.buildingId);
   }
 
   // builds the map
@@ -75,7 +72,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     // builds the map
 
     _getCurrentPosition();
-    double? lat = 42.27507; // south road parking garage
+    double? lat = 42.27507; // south road parking garage is the default target location
     double? lng = -71.76205;
 
     // checks if current location was updated and if so, updates lat and lng accordingly
@@ -117,11 +114,21 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                     children: [
                   //CurrentLocation(mapController: _mapController),
                   if (_isImageVisible)
-                    SizedBox(
-                      width: 600,
-                      height: 600,
-                      child: Image.asset('assets/UMass_Img.jpg'),
-                    ),
+                    // SizedBox(
+                    //   width: 600,
+                    //   height: 600,
+                    //   child: Image.asset(img),//Image.asset('assets/UMass_Img.jpg'),
+                    // ),
+                    Container(
+                        width: 600,
+                        height: 600,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(8.0),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(img),
+                            ))),
                   if (!_isImageVisible)
                     Expanded(
                       child: Container(
@@ -297,6 +304,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     return _isListening() ? Colors.green : Colors.red;
   }
 
+  // gets the doctor's name
   Future<void> _getDoctorName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
@@ -307,12 +315,13 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       final firstName = data['first_name'].toString();
       final lastName = data['last_name'].toString();
       setState(() {
-        doctorName = firstName + ' ' + lastName;
+        doctorName = '$firstName $lastName';
       });
 
     }
   }
 
+  // gets the building's name
   Future<void> _getBuildingName(int buildingId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -327,6 +336,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
   }
 
+  // gets the floor's name
   Future<void> _getFloorName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
@@ -337,6 +347,23 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       final floor = data['floor'].toString();
       setState(() {
         floorName = floor;
+      });
+    }
+  }
+
+  // gets the image's url
+  Future<void> _getImage(int doctorId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('buildings')
+        .where('building_id', isEqualTo: doctorId)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final imgUrl = await FirebaseStorage.instance
+          .ref('${data['campus']}_${data['building_id']}.jpg')
+          .getDownloadURL();
+      setState(() {
+        img = imgUrl;
       });
     }
   }
