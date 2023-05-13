@@ -102,7 +102,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
         centerTitle: true,
         title: Expanded(
           child: Text(
-              ('Building: $buildingName , Doctor: $doctorName, Floor: $floorName'),
+              ('Building: $buildingName | Doctor: $doctorName | Floor: $floorName'),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 10)),
         ),

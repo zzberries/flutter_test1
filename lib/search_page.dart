@@ -76,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all( 15),
+          padding: const EdgeInsets.all(15),
           child: Text(
             'What is the reason of appointment?',
             textAlign: TextAlign.center,
@@ -122,7 +122,8 @@ class _SearchPageState extends State<SearchPage> {
                       itemBuilder: (context, index) {
                         return Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey[300], // Adjust the shade of grey as needed
+                            color: Colors.grey[
+                                300], // Adjust the shade of grey as needed
                           ),
                           child: ListTile(
                             title: Text(_suggestions[index]),
@@ -205,18 +206,30 @@ class _SearchPageState extends State<SearchPage> {
                           return Container(
                             width: 340, // Specify the desired width
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
-                                color: Colors.grey[200] // Specify the desired background color
-                            ),
+                                borderRadius: BorderRadius.circular(10),
+                                // Adjust the border radius as needed
+                                color: Colors.grey[
+                                    200] // Specify the desired background color
+                                ),
                             child: DropdownButton(
+                              isExpanded: true,
                               items: [
                                 const DropdownMenuItem(
-                                    value: -1, child: Text('N/A')),
+                                    value: -1,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                      ),
+                                      child: Text(
+                                        'N/A',
+                                      ),
+                                    )),
                                 ...buildings.map((d) {
                                   return DropdownMenuItem(
                                     value: d.buildingID,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left:8), // Specify the desired padding
+                                      padding: const EdgeInsets.only(left: 8),
+                                      // Specify the desired padding
                                       child: Text(d.buildingName),
                                     ),
                                   );
@@ -229,7 +242,8 @@ class _SearchPageState extends State<SearchPage> {
                                 });
                                 await _getLatLong(_buildingID);
                               },
-                              dropdownColor: Colors.grey[300], // Specify the desired dropdown color
+                              dropdownColor: Colors.grey[300],
+                              // Specify the desired dropdown color
                               style: const TextStyle(color: Colors.black),
                             ),
                           );
@@ -288,21 +302,32 @@ class _SearchPageState extends State<SearchPage> {
                           return Container(
                             width: 340, // Specify the desired width
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
-                                color: Colors.grey[200] // Specify the desired background color
-                            ),
+                                borderRadius: BorderRadius.circular(10),
+                                // Adjust the border radius as needed
+                                color: Colors.grey[
+                                    200] // Specify the desired background color
+                                ),
                             child: DropdownButton(
+                              isExpanded: true,
                               items: [
                                 const DropdownMenuItem(
-                                    value: -1, child: Text('N/A')),
+                                    value: -1,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                      ),
+                                      child: Text(
+                                        'N/A',
+                                      ),
+                                    )),
                                 ...doctors.map((d) {
                                   return DropdownMenuItem(
                                     value: d.doctorID,
                                     child: Padding(
                                         padding: const EdgeInsets.only(left: 8),
-                                        child: Text('${d.lastName}, ${d.firstName}')),
+                                        child: Text(
+                                            '${d.lastName}, ${d.firstName}')),
                                   );
-                                  
                                 }).toList(),
                               ],
                               value: _doctorID,
@@ -312,7 +337,8 @@ class _SearchPageState extends State<SearchPage> {
                                 });
                                 await _getBuildingName(_doctorID);
                               },
-                              dropdownColor: Colors.grey[300], // Specify the desired dropdown color
+                              dropdownColor: Colors.grey[300],
+                              // Specify the desired dropdown color
                               style: const TextStyle(color: Colors.black),
                             ),
                           );
@@ -376,20 +402,30 @@ class _SearchPageState extends State<SearchPage> {
                           return Container(
                             width: 340, // Specify the desired width
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
-                              color: Colors.grey[200] // Specify the desired background color
-                            ),
+                                borderRadius: BorderRadius.circular(10),
+                                // Adjust the border radius as needed
+                                color: Colors.grey[
+                                    200] // Specify the desired background color
+                                ),
                             child: DropdownButton(
+                              isExpanded: true,
                               items: [
                                 const DropdownMenuItem(
-                                  value: -1,
-                                  child: Text('N/A'),
-                                ),
+                                    value: -1,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                      ),
+                                      child: Text(
+                                        'N/A',
+                                      ),
+                                    )),
                                 ...departments.map((d) {
                                   return DropdownMenuItem(
                                     value: d.departmentID,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left:8), // Specify the desired padding
+                                      padding: const EdgeInsets.only(left: 8),
+                                      // Specify the desired padding
                                       child: Text(d.departmentName),
                                     ),
                                   );
@@ -402,79 +438,82 @@ class _SearchPageState extends State<SearchPage> {
                                 });
                                 await _getDepartmentId(_departmentName);
                               },
-                              dropdownColor: Colors.grey[300], // Specify the desired dropdown color
-                              style: const TextStyle(color: Colors.black), // Specify the desired text color
+                              dropdownColor: Colors.grey[300],
+                              // Specify the desired dropdown color
+                              style: const TextStyle(
+                                  color: Colors
+                                      .black), // Specify the desired text color
                             ),
                           );
-
                         },
                       ),
                     ],
                   ),
                 ),
-               Center(
-                    child: Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.all(24),
-                                child: ElevatedButton(
-                                  onPressed: _resetsAllValues,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.indigo[300], // Adjust opacity for a lighter color
-                                  ),
-                                  child: const Text('Reset'),
+                Center(
+                  child: Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(24),
+                              child: ElevatedButton(
+                                onPressed: _resetsAllValues,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.indigo[
+                                      300], // Adjust opacity for a lighter color
                                 ),
+                                child: const Text('Reset'),
                               ),
-                              Container(
-                                margin: const EdgeInsets.all(24),
-                                child: ElevatedButton(
-                                  onPressed: !(_doctorID == -1 &&
-                                      _departmentID == -1 &&
-                                      _buildingID == -1)
-                                      ? () {
-                                    if (_departmentID != -1 && _buildingID == -1) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ChoicePage(
-                                            buildingID: _buildingID,
-                                            departmentID: _departmentID,
-                                            doctorID: _doctorID,
-                                          ),
-                                        ),
-                                      );
-                                    } else if (_buildingID != -1) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => FavoriteMapPage(
-                                            lat: _lat,
-                                            long: _long,
-                                            buildingId: _buildingID,
-                                            departmentId: -1,
-                                            doctorId: _doctorID,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                      : null,
-                                  child: const Text('Next'),
-                                ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.all(24),
+                              child: ElevatedButton(
+                                onPressed: !(_doctorID == -1 &&
+                                        _departmentID == -1 &&
+                                        _buildingID == -1)
+                                    ? () {
+                                        if (_departmentID != -1 &&
+                                            _buildingID == -1) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ChoicePage(
+                                                buildingID: _buildingID,
+                                                departmentID: _departmentID,
+                                                doctorID: _doctorID,
+                                              ),
+                                            ),
+                                          );
+                                        } else if (_buildingID != -1) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FavoriteMapPage(
+                                                lat: _lat,
+                                                long: _long,
+                                                buildingId: _buildingID,
+                                                departmentId: -1,
+                                                doctorId: _doctorID,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    : null,
+                                child: const Text('Next'),
                               ),
-
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-
+                ),
               ],
             ),
           ),
