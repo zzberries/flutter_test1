@@ -5,7 +5,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
-import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'search_page.dart';
 
@@ -23,20 +22,11 @@ class FavoriteMapPage extends StatefulWidget {
 }
 
 class _FavoriteMapPageState extends State<FavoriteMapPage> {
-  static const String _kLocationServicesDisabledMessage =
-      'Location services are disabled.';
-  static const String _kPermissionDeniedMessage = 'Permission denied.';
-  static const String _kPermissionDeniedForeverMessage =
-      'Permission denied forever.';
-  static const String _kPermissionGrantedMessage = 'Permission granted.';
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
-
   StreamSubscription<Position>? _positionStreamSubscription;
-  StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool positionStreamStarted = false;
   bool _isImageVisible = false;
-  DateTime? _lastReadAt;
   late double currentLat = 0;
   late double currentLong = 0;
   late final MapController _mapController;
@@ -54,11 +44,14 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     _fetchData();
   }
 
+  // toggles between displaying the image of the building and the map
   void _toggleImageVisibility() {
     setState(() {
       _isImageVisible = !_isImageVisible;
     });
   }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _fetchData();
@@ -75,7 +68,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     // builds the map
 
     _getCurrentPosition();
-    double? lat = 42.27507; // south road parking garage
+    double? lat = 42.27507; // south road parking garage is the default target location
     double? lng = -71.76205;
 
     // checks if current location was updated and if so, updates lat and lng accordingly
@@ -297,6 +290,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     return _isListening() ? Colors.green : Colors.red;
   }
 
+  // gets the doctor's name
   Future<void> _getDoctorName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
@@ -307,12 +301,13 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       final firstName = data['first_name'].toString();
       final lastName = data['last_name'].toString();
       setState(() {
-        doctorName = firstName + ' ' + lastName;
+        doctorName = '$firstName $lastName';
       });
 
     }
   }
 
+  // gets the building's name
   Future<void> _getBuildingName(int buildingId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -327,6 +322,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
   }
 
+  // gets the floor's name
   Future<void> _getFloorName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
