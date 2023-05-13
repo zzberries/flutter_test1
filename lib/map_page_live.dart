@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,6 +15,7 @@ class FavoriteMapPage extends StatefulWidget {
   final int buildingId;
   final int departmentId;
   final int doctorId;
+
 
   const FavoriteMapPage({super.key, required this.lat, required this.long, required this.buildingId, required this.departmentId, required this.doctorId});
 
@@ -36,6 +38,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   String doctorName = "N/A";
   String floorName = "N/A";
   bool showMarker = false;
+  String img = "";
 
   @override
   void initState()  {
@@ -61,6 +64,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     await _getDoctorName(widget.doctorId);
     await _getFloorName(widget.doctorId);
     await _getBuildingName(widget.buildingId);
+    await _getImage(widget.buildingId);
   }
 
   // builds the map
@@ -110,11 +114,21 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                     children: [
                   //CurrentLocation(mapController: _mapController),
                   if (_isImageVisible)
-                    SizedBox(
-                      width: 600,
-                      height: 600,
-                      child: Image.asset('assets/UMass_Img.jpg'),
-                    ),
+                    // SizedBox(
+                    //   width: 600,
+                    //   height: 600,
+                    //   child: Image.asset(img),//Image.asset('assets/UMass_Img.jpg'),
+                    // ),
+                    Container(
+                        width: 600,
+                        height: 600,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(8.0),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(img),
+                            ))),
                   if (!_isImageVisible)
                     Expanded(
                       child: Container(
@@ -333,6 +347,23 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       final floor = data['floor'].toString();
       setState(() {
         floorName = floor;
+      });
+    }
+  }
+
+  // gets the image's url
+  Future<void> _getImage(int doctorId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('buildings')
+        .where('building_id', isEqualTo: doctorId)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final imgUrl = await FirebaseStorage.instance
+          .ref('${data['campus']}_${data['building_id']}.jpg')
+          .getDownloadURL();
+      setState(() {
+        img = imgUrl;
       });
     }
   }
