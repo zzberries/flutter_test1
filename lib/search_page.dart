@@ -76,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.all( 15),
           child: Text(
             'What is the reason of appointment?',
             textAlign: TextAlign.center,
@@ -158,7 +158,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 15),
+                        padding: const EdgeInsets.all(15),
                         child: Text(
                           'What building are you going to?',
                           textAlign: TextAlign.center,
@@ -202,24 +202,36 @@ class _SearchPageState extends State<SearchPage> {
                             }
                           }
 
-                          return DropdownButton(
-                            items: [
-                              const DropdownMenuItem(
-                                  value: -1, child: Text('N/A')),
-                              ...buildings.map((d) {
-                                return DropdownMenuItem(
-                                  value: d.buildingID,
-                                  child: Text(d.buildingName),
-                                );
-                              }).toList(),
-                            ],
-                            value: _buildingID,
-                            onChanged: (int? newValue) async {
-                              setState(() {
-                                _buildingID = newValue!;
-                              });
-                              await _getLatLong(_buildingID);
-                            },
+                          return Container(
+                            width: 340, // Specify the desired width
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
+                                color: Colors.grey[200] // Specify the desired background color
+                            ),
+                            child: DropdownButton(
+                              items: [
+                                const DropdownMenuItem(
+                                    value: -1, child: Text('N/A')),
+                                ...buildings.map((d) {
+                                  return DropdownMenuItem(
+                                    value: d.buildingID,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left:8), // Specify the desired padding
+                                      child: Text(d.buildingName),
+                                    ),
+                                  );
+                                }).toList(),
+                              ],
+                              value: _buildingID,
+                              onChanged: (int? newValue) async {
+                                setState(() {
+                                  _buildingID = newValue!;
+                                });
+                                await _getLatLong(_buildingID);
+                              },
+                              dropdownColor: Colors.grey[300], // Specify the desired dropdown color
+                              style: const TextStyle(color: Colors.black),
+                            ),
                           );
                         },
                       ),
@@ -233,7 +245,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 15),
+                        padding: const EdgeInsets.all(15),
                         child: Text(
                           'What is the name of the doctor?',
                           textAlign: TextAlign.center,
@@ -273,24 +285,36 @@ class _SearchPageState extends State<SearchPage> {
                                     doctor.buildingID == _buildingID)
                                 .toList();
                           }
-                          return DropdownButton(
-                            items: [
-                              const DropdownMenuItem(
-                                  value: -1, child: Text('N/A')),
-                              ...doctors.map((d) {
-                                return DropdownMenuItem(
-                                  value: d.doctorID,
-                                  child: Text('${d.lastName}, ${d.firstName}'),
-                                );
-                              }).toList(),
-                            ],
-                            value: _doctorID,
-                            onChanged: (int? newValue) async {
-                              setState(() {
-                                _doctorID = newValue!;
-                              });
-                              await _getBuildingName(_doctorID);
-                            },
+                          return Container(
+                            width: 340, // Specify the desired width
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
+                                color: Colors.grey[200] // Specify the desired background color
+                            ),
+                            child: DropdownButton(
+                              items: [
+                                const DropdownMenuItem(
+                                    value: -1, child: Text('N/A')),
+                                ...doctors.map((d) {
+                                  return DropdownMenuItem(
+                                    value: d.doctorID,
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: Text('${d.lastName}, ${d.firstName}')),
+                                  );
+                                  
+                                }).toList(),
+                              ],
+                              value: _doctorID,
+                              onChanged: (int? newValue) async {
+                                setState(() {
+                                  _doctorID = newValue!;
+                                });
+                                await _getBuildingName(_doctorID);
+                              },
+                              dropdownColor: Colors.grey[300], // Specify the desired dropdown color
+                              style: const TextStyle(color: Colors.black),
+                            ),
                           );
                         },
                       ),
@@ -304,7 +328,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 15),
+                        padding: const EdgeInsets.all(15),
                         child: Text(
                           'What department are you going to?',
                           textAlign: TextAlign.center,
@@ -349,26 +373,40 @@ class _SearchPageState extends State<SearchPage> {
                             }
                           }
 
-                          return DropdownButton(
-                            items: [
-                              const DropdownMenuItem(
-                                  value: -1, child: Text('N/A')),
-                              ...departments.map((d) {
-                                return DropdownMenuItem(
-                                  value: d.departmentID,
-                                  child: Text(d.departmentName),
-                                );
-                              }).toList(),
-                            ],
-                            value: _departmentID,
-                            onChanged: (int? newValue) async {
-                              setState(() {
-                                _departmentID = newValue!;
-                              });
-
-                              await _getDepartmentId(_departmentName);
-                            },
+                          return Container(
+                            width: 340, // Specify the desired width
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
+                              color: Colors.grey[200] // Specify the desired background color
+                            ),
+                            child: DropdownButton(
+                              items: [
+                                const DropdownMenuItem(
+                                  value: -1,
+                                  child: Text('N/A'),
+                                ),
+                                ...departments.map((d) {
+                                  return DropdownMenuItem(
+                                    value: d.departmentID,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left:8), // Specify the desired padding
+                                      child: Text(d.departmentName),
+                                    ),
+                                  );
+                                }).toList(),
+                              ],
+                              value: _departmentID,
+                              onChanged: (int? newValue) async {
+                                setState(() {
+                                  _departmentID = newValue!;
+                                });
+                                await _getDepartmentId(_departmentName);
+                              },
+                              dropdownColor: Colors.grey[300], // Specify the desired dropdown color
+                              style: const TextStyle(color: Colors.black), // Specify the desired text color
+                            ),
                           );
+
                         },
                       ),
                     ],
