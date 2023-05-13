@@ -1,5 +1,7 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 
+/// This class models a building with an Id, name, coordinates, the campus it is located on, and the departments
+/// located in that building.
 class Building {
   final int buildingID;
   final String buildingName;
@@ -8,6 +10,7 @@ class Building {
   final double long;
   final List departmentList;
 
+  /// Creates a building with a given [buildingID], [buildingName], [campus], coordinates of [lat] and [long], and [departmentList].
   Building({
     required this.buildingID,
     required this.buildingName,
@@ -17,6 +20,7 @@ class Building {
     required this.departmentList,
   });
 
+  /// Converts a [DocumentSnapshot] from Firestore into a [Building] object.
   factory Building.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options,
@@ -32,6 +36,7 @@ class Building {
     ); //Building
   }
 
+  /// Converts a [Building} object into a map that can be stored in Firestore.
   Map<String, dynamic> toFirestore() {
     return {
       "building_id": buildingID,

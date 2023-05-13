@@ -5,7 +5,7 @@ import 'package:flutter_workspace/search_page.dart';
 import 'firestore_collections/Building.dart';
 import 'map_page_live.dart';
 
-
+/// This class models the choice page, which allows users to input information about the building they are trying to find.
 class ChoicePage extends StatefulWidget {
   final int buildingID;
   final int doctorID;
@@ -124,6 +124,8 @@ class _ChoicePageState extends State<ChoicePage> {
     );
   }
 
+  /// Updates the destination list to a list of destination objects, which will be later displayed to the user once they
+  /// have filled out all items on the choice page.
   Future<void> loadDestinations() async {
     _destinations = [];
     final destinationList = <Destination>[];
@@ -191,6 +193,7 @@ class _ChoicePageState extends State<ChoicePage> {
   }
 }
 
+/// This class models a list item containing a building name, campus name, image of building, and the department of that building.
 class Destination {
   String buildingName;
   String campusName;

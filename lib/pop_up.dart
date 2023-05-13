@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_workspace/navbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// This class models the brief pop-up of the app logo before the app loads.
 class OpeningPage extends StatefulWidget {
   const OpeningPage({super.key});
 

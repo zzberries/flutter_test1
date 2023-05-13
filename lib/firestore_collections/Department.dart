@@ -1,11 +1,14 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 
+/// This class models a department with an id, name, the list of buildings that contain the department,
+/// and a list of keywords related to the department.
 class Department {
   final int departmentID;
   final String departmentName;
   final List departmentKeywords;
   final List buildingList;
 
+  /// Creates a department with a given [departmentID], [departmentName], [buildingList], and a list of [departmentKeywords].
   Department({
     required this.departmentID,
     required this.departmentName,
@@ -13,6 +16,7 @@ class Department {
     required this.buildingList,
   });
 
+  /// Converts a [DocumentSnapshot] from Firestore into a [Department] object.
   factory Department.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
@@ -26,6 +30,7 @@ class Department {
     ); //Department
   }
 
+  /// Converts a [Building} object into a map that can be stored in Firestore.
   Map<String, dynamic> toFirestore() {
     return {
       "department_id": departmentID,

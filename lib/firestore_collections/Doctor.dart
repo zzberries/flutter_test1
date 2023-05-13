@@ -1,5 +1,7 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 
+/// This class models a doctor with an id, name, and phone number, as well as the building, department, and floor number the
+/// doctor works on.
 class Doctor {
   final String building;
   final String department;
@@ -9,6 +11,8 @@ class Doctor {
   final String floorNumber;
   final String phoneNumber;
 
+  /// Creates a doctor with a give [building], [department], [doctorID], [firstName], [lastName],
+  /// [floorNumber], and [phoneNumber].
   Doctor({
     required this.building,
     required this.department,
@@ -19,6 +23,7 @@ class Doctor {
     required this.phoneNumber,
   });
 
+  /// Converts a [DocumentSnapshot] from Firestore into a [Doctor] object.
   factory Doctor.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
@@ -35,6 +40,7 @@ class Doctor {
     ); //Doctor
   }
 
+  /// Converts a [Doctor] object into a map that can be stored in Firestore.
   Map<String, dynamic> toFirestore() {
     return {
       "building": building,

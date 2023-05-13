@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// This class models the announcements page, which informs user of any important information.
 class AnnouncementPage extends StatefulWidget {
   const AnnouncementPage({super.key});
 

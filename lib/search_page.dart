@@ -381,7 +381,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  /// Updates the department id variable to specific building's coordinates given its [departmentName].
+  /// Updates the department id variable to a specific department's id given the [departmentName].
   Future<void> _getDepartmentId(String departmentName) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('departments')
@@ -397,7 +397,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  /// Updates the building id variable to specific building's coordinates given its [doctorId].
+  /// Updates the building name variable to the name of the that a specified building that a specific doctor works in given their [doctorId].
   Future<void> _getBuildingName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
@@ -411,7 +411,7 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  /// Updates the building name variable to specific building's coordinates given its [_doctorId].
+  /// Updates the building id variable to the id of a specified building given the its [buildingName].
   Future<void> _getBuildingId(String buildingName) async { // Change the parameter name
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -428,6 +428,8 @@ class _SearchPageState extends State<SearchPage> {
     await _getLatLong(_buildingID);
   }
 
+  /// Updates the department id variable to a specific department's id given the [keyword] the user inputted into
+  /// the search bar related to the specific department.
   Future<void> _getDepartmentfromKeyword(String keyword) async { // Change the parameter name
     final snapshot = await FirebaseFirestore.instance
         .collection('departments')
