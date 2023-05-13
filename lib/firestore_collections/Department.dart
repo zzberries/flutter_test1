@@ -5,12 +5,14 @@ class Department {
   final String departmentName;
   final List departmentKeywords;
   final List buildingList;
+  final List doctorList;
 
   Department({
     required this.departmentID,
     required this.departmentName,
     required this.departmentKeywords,
     required this.buildingList,
+    required this.doctorList,
   });
 
   factory Department.fromFirestore(
@@ -23,6 +25,7 @@ class Department {
       departmentName: data?['department_name'],
       departmentKeywords: data?['keyword_list'],
       buildingList: data?['building_list'],
+      doctorList: data?['doctor_list'],
     ); //Department
   }
 
@@ -32,6 +35,7 @@ class Department {
       "departmentName": departmentName,
       "keyword_list": departmentKeywords,
       "building_list": buildingList,
+      "doctor_list": doctorList,
     };
   }
 }
