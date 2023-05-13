@@ -25,6 +25,7 @@ class _ChoicePageState extends State<ChoicePage> {
   List<Destination> _destinations = [];
   double _lat = 0.0;
   double _long = 0.0;
+  int thisBuildingId = 0;
 
   @override
   void initState() {
@@ -92,9 +93,10 @@ class _ChoicePageState extends State<ChoicePage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             await _getLatLong(item.buildingName);
+                            await _getBuildingId(item.buildingName);
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => FavoriteMapPage(lat: _lat, long: _long, buildingId: widget.buildingID,departmentId: widget.departmentID,doctorId: widget.doctorID),
+                                  builder: (context) => FavoriteMapPage(lat: _lat, long: _long, buildingId: thisBuildingId,departmentId: widget.departmentID,doctorId: widget.doctorID),
                                 ),
                               );
 
@@ -189,6 +191,22 @@ class _ChoicePageState extends State<ChoicePage> {
         _long = long;
       });
 
+    }
+  }
+
+  /// Updates the building id variable to specific building's coordinates given its [buildingName].
+  Future<void> _getBuildingId(String buildingName) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('buildings')
+        .where('building_name', isEqualTo: buildingName)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final buildingId = data['building_id'].toInt();
+      // Pass buildingName as the parameter
+      setState(() {
+        thisBuildingId = buildingId;
+      });
     }
   }
 }
