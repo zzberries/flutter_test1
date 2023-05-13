@@ -5,7 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
-import 'package:flutter_compass/flutter_compass.dart';
+
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'search_page.dart';
 

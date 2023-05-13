@@ -7,6 +7,7 @@ class Building {
   final double lat;
   final double long;
   final List departmentList;
+  final List doctorList;
 
   Building({
     required this.buildingID,
@@ -15,6 +16,7 @@ class Building {
     required this.lat,
     required this.long,
     required this.departmentList,
+    required this.doctorList,
   });
 
   factory Building.fromFirestore(
@@ -29,6 +31,7 @@ class Building {
       lat: data?['lat'],
       long: data?['long'],
       departmentList: data?['department_list'],
+      doctorList: data?['doctor_list'],
     ); //Building
   }
 
@@ -40,6 +43,7 @@ class Building {
       "lat": lat,
       "long": long,
       "department_list": departmentList,
+      "doctor_list": doctorList,
     };
   }
 }
