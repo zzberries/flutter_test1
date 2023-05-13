@@ -60,6 +60,7 @@ dependencies:
 
   google_fonts: ^4.0.4
   flutter_map_location_marker: ^6.0.0
+  latlong2: ^0.8.1
 #  firebase_core: ^0.7.0
 #dependency_overrides:
  # firebase_core_platform_interface: 4.4.1

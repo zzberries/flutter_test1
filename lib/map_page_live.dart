@@ -1,14 +1,17 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+
 import 'search_page.dart';
 
+/// This class models the map page where users can view where they are and where their destination is.
 class FavoriteMapPage extends StatefulWidget {
   final double lat;
   final double long;
@@ -16,17 +19,20 @@ class FavoriteMapPage extends StatefulWidget {
   final int departmentId;
   final int doctorId;
 
-
-  const FavoriteMapPage({super.key, required this.lat, required this.long, required this.buildingId, required this.departmentId, required this.doctorId});
+  const FavoriteMapPage(
+      {super.key,
+      required this.lat,
+      required this.long,
+      required this.buildingId,
+      required this.departmentId,
+      required this.doctorId});
 
   @override
   State<FavoriteMapPage> createState() => _FavoriteMapPageState();
 }
 
 class _FavoriteMapPageState extends State<FavoriteMapPage> {
-
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
-  StreamSubscription<Position>? _positionStreamSubscription;
   bool positionStreamStarted = false;
   bool _isImageVisible = false;
   late double currentLat = 0;
@@ -41,13 +47,13 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   String img = "";
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     _mapController = MapController();
     _fetchData();
   }
 
-  // toggles between displaying the image of the building and the map
+  /// Toggles between displaying the image of the building and the map
   void _toggleImageVisibility() {
     setState(() {
       _isImageVisible = !_isImageVisible;
@@ -67,15 +73,15 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     await _getImage(widget.buildingId);
   }
 
-  // builds the map
+  /// Builds the map
   Widget _buildMap(BuildContext context) {
-    // builds the map
 
     _getCurrentPosition();
-    double? lat = 42.27507; // south road parking garage is the default target location
+    double? lat =
+        42.27507; // south road parking garage is the default target location
     double? lng = -71.76205;
 
-    // checks if current location was updated and if so, updates lat and lng accordingly
+    /// Checks if current location was updated and if so, updates lat and long accordingly
     if (currentLat != 0) {
       lat = currentLat;
       lng = currentLong;
@@ -83,7 +89,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
 
     final coordinates = [LatLng(lat, lng)];
 
-    // calculates the bounds for the default orientation/location of the map
+    /// Calculates the bounds for the default orientation/location of the map
     final bounds = LatLngBounds.fromPoints(coordinates
         .map((location) =>
             latlong2.LatLng(location.latitude, location.longitude))
@@ -96,7 +102,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
         centerTitle: true,
         title: Expanded(
           child: Text(
-              ('Building: $buildingName , Doctor: $doctorName, Floor: $floorName') ,
+              ('Building: $buildingName , Doctor: $doctorName, Floor: $floorName'),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 10)),
         ),
@@ -105,73 +111,70 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       ),
       body: Stack(children: <Widget>[
         Container(
-            width: double.maxFinite,
-            height: double.maxFinite,
-            color: Colors.black,
-            child: Material(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                  //CurrentLocation(mapController: _mapController),
-                  if (_isImageVisible)
-                    // SizedBox(
-                    //   width: 600,
-                    //   height: 600,
-                    //   child: Image.asset(img),//Image.asset('assets/UMass_Img.jpg'),
-                    // ),
-                    Container(
-                        width: 600,
-                        height: 600,
-                        decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(img),
-                            ))),
-                  if (!_isImageVisible)
-                    Expanded(
-                      child: Container(
-                        constraints: const BoxConstraints(maxHeight: 600),
-                        child: FlutterMap(
-                          mapController: _mapController,
-                          options: MapOptions(
-                            bounds: bounds,
-                            boundsOptions: FitBoundsOptions(
-                              padding: EdgeInsets.only(
-                                left: padding,
-                                top: padding +
-                                    MediaQuery.of(context).padding.top,
-                                right: padding,
-                                bottom: padding,
-                              ),
+          width: double.maxFinite,
+          height: double.maxFinite,
+          color: Colors.black,
+          child: Material(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //CurrentLocation(mapController: _mapController),
+                if (_isImageVisible)
+                  Container(
+                      width: 600,
+                      height: 600,
+                      decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(8.0),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(img),
+                          ))),
+                if (!_isImageVisible)
+                  Expanded(
+                    child: Container(
+                      constraints: const BoxConstraints(maxHeight: 600),
+                      child: FlutterMap(
+                        mapController: _mapController,
+                        options: MapOptions(
+                          bounds: bounds,
+                          boundsOptions: FitBoundsOptions(
+                            padding: EdgeInsets.only(
+                              left: padding,
+                              top: padding + MediaQuery.of(context).padding.top,
+                              right: padding,
+                              bottom: padding,
                             ),
                           ),
-                          nonRotatedChildren: [
-                            TileLayer(
-                              urlTemplate:
-                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            ),
-                            MarkerLayer(
-                              markers: [
-                                Marker(
-                                  point: latlong2.LatLng(widget.lat, widget.long),
-                                  width: 100,
-                                  height: 100,
-                                  builder: (context) => const Icon(
-                                    Icons.star,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            CurrentLocationLayer()
-                          ],
                         ),
+                        nonRotatedChildren: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                point: latlong2.LatLng(widget.lat, widget.long),
+                                width: 100,
+                                height: 100,
+                                builder: (context) => const Icon(
+                                  Icons.star,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
+                          ),
+                          CurrentLocationLayer()
+                        ],
                       ),
-                      //Expanded(child: _buildCompass()),
-                    )
-                ]))),
+                    ),
+                    //Expanded(child: _buildCompass()),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ]),
     );
   }
@@ -186,9 +189,9 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     if (_isImageVisible) {
       icon = Icons.map;
     }
-    // buttons to recenter the map and go back to the previous page
+    /// Buttons to recenter the map and go back to the previous page
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: _buildMap(context),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -225,7 +228,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     );
   }
 
-  // updates currentLat and currentLong
+  /// Updates current latitude and longitude
   Future<void> _getCurrentPosition() async {
     final hasPermission = await _handlePermission();
 
@@ -241,7 +244,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     showMarker = true;
   }
 
-  // recenters the map around the current location
+  /// Re-centers the map around the current location
   _recenterMap() async {
     if (await _handlePermission()) {
       showMarker = true;
@@ -249,7 +252,7 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
   }
 
-  // recenters the map around the target location
+  /// Re-centers the map around the target location
   _recenterMapTarget() async {
     if (await _handlePermission()) {
       showMarker = true;
@@ -257,17 +260,13 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
   }
 
-  // returns whether or not permissions are enabled to access current location
+  /// Returns whether or not permissions are enabled to access current location
   Future<bool> _handlePermission() async {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Test if location services are enabled.
     serviceEnabled = await _geolocatorPlatform.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
 
       return false;
     }
@@ -276,35 +275,20 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     if (permission == LocationPermission.denied) {
       permission = await _geolocatorPlatform.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-
         return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
 
       return false;
     }
 
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
     return true;
   }
 
-  bool _isListening() => !(_positionStreamSubscription == null ||
-      _positionStreamSubscription!.isPaused);
 
-  Color _determineButtonColor() {
-    return _isListening() ? Colors.green : Colors.red;
-  }
-
-  // gets the doctor's name
+  /// Updates the doctor name variable given the doctor's [doctorId].
   Future<void> _getDoctorName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
@@ -317,11 +301,10 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       setState(() {
         doctorName = '$firstName $lastName';
       });
-
     }
   }
 
-  // gets the building's name
+  /// Updates the building name variable given the buildings [buildingId].
   Future<void> _getBuildingName(int buildingId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -336,7 +319,8 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
   }
 
-  // gets the floor's name
+  /// Updates the floor name variable to the name of the floor the specified doctor works on
+  /// given the doctor's [doctorId].
   Future<void> _getFloorName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
@@ -351,7 +335,8 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
     }
   }
 
-  // gets the image's url
+  /// Updates the image variable to the image of the building that the specified doctor works in
+  /// given the doctor's [doctorId].
   Future<void> _getImage(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -367,6 +352,4 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
       });
     }
   }
-
-
 }

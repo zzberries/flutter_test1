@@ -62,12 +62,12 @@ class _SearchPageState extends State<SearchPage> {
 
   final String _departmentName = 'N/A';
 
+  ///variables representing the ID for each of the dropdown menus
   int _doctorID = -1;
   int _buildingID = -1;
   int _departmentID = -1;
 
   double _lat = 0.0;
-
   double _long = 0.0;
 
   @override
@@ -116,7 +116,7 @@ class _SearchPageState extends State<SearchPage> {
                   },
                   child: Container(
                     margin: const EdgeInsets.only(top: 60),
-                    height: 100,
+                    height: 200,
                     child: ListView.builder(
                       itemCount: _suggestions.length,
                       itemBuilder: (context, index) {
@@ -127,7 +127,8 @@ class _SearchPageState extends State<SearchPage> {
                               _searchController.text = _suggestions[index];
                               _isTextFieldFilled = false;
                             });
-                            await _getDepartmentfromKeyword(
+                            ///the global variable _departmentID is set, also changing the department dropdown state
+                            await _getDepartmentFromKeyword(
                                 _suggestions[index]);
                           },
                         );
@@ -245,12 +246,27 @@ class _SearchPageState extends State<SearchPage> {
                           if (!snapshot.hasData) {
                             return const CircularProgressIndicator();
                           }
+                          var doctors =
+                          snapshot.data!.docs.map((e) => e.data()).toList();
+
+                          ///If the user selects a department, filter the doctor list by doctors within the specified department
+                          if (_departmentID != -1) {
+                            doctors = doctors
+                                .where((doctor) => doctor.departmentID == _departmentID)
+                                .toList();
+                          }
+
+                          ///If the user selects a building, filter the doctor list by doctors with the specified building
+                          if (_buildingID != -1) {
+                            doctors = doctors
+                                .where((doctor) => doctor.buildingID == _buildingID)
+                                .toList();
+                          }
                           return DropdownButton(
                             items: [
                               const DropdownMenuItem(
                                   value: -1, child: Text('N/A')),
-                              ...snapshot.data!.docs.map((e) {
-                                var d = e.data();
+                              ...doctors.map((d) {
                                 return DropdownMenuItem(
                                   value: d.doctorID,
                                   child: Text('${d.lastName}, ${d.firstName}'),
@@ -300,12 +316,29 @@ class _SearchPageState extends State<SearchPage> {
                           if (!snapshot.hasData) {
                             return const CircularProgressIndicator();
                           }
+                          var departments =
+                              snapshot.data!.docs.map((e) => e.data()).toList();
+
+                          ///If the user selects a building, filter the building list by departments with the specified building
+                          if (_buildingID != -1) {
+                            departments = departments
+                                .where((department) => department.buildingList
+                                    .contains(_buildingID))
+                                .toList();
+                          }
+                          ///If the user selects a doctor, filter the department list by departments with the specified doctor
+                          if (_doctorID != -1) {
+                            departments = departments
+                                .where((department) =>
+                                    department.doctorList.contains(_doctorID))
+                                .toList();
+                          }
+
                           return DropdownButton(
                             items: [
                               const DropdownMenuItem(
                                   value: -1, child: Text('N/A')),
-                              ...snapshot.data!.docs.map((e) {
-                                var d = e.data();
+                              ...departments.map((d) {
                                 return DropdownMenuItem(
                                   value: d.departmentID,
                                   child: Text(d.departmentName),
@@ -377,8 +410,10 @@ class _SearchPageState extends State<SearchPage> {
 
     for (var doc in querySnapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
+
       List<dynamic> keywords =
           data['keyword_list']; // Assuming 'building_name' is an array field
+
 
       for (var name in keywords) {
         String keyword = name.toString();
@@ -435,12 +470,12 @@ class _SearchPageState extends State<SearchPage> {
       final data = snapshot.docs[0].data();
       final buildingName = data['building'].toString();
 
-      await _getBuildingId(buildingName); // Pass buildingName as the parameter
+      await _getBuildingID(buildingName); // Pass buildingName as the parameter
     }
   }
 
   /// Updates the building id variable to the id of a specified building given the its [buildingName].
-  Future<void> _getBuildingId(String buildingName) async {
+  Future<void> _getBuildingID(String buildingName) async {
     // Change the parameter name
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -458,7 +493,7 @@ class _SearchPageState extends State<SearchPage> {
 
   /// Updates the department id variable to a specific department's id given the [keyword] the user inputted into
   /// the search bar related to the specific department.
-  Future<void> _getDepartmentfromKeyword(String keyword) async {
+  Future<void> _getDepartmentFromKeyword(String keyword) async {
     // Change the parameter name
     final snapshot = await FirebaseFirestore.instance
         .collection('departments')
