@@ -5,6 +5,7 @@ import 'package:flutter_workspace/search_page.dart';
 import 'firestore_collections/Building.dart';
 import 'map_page_live.dart';
 
+
 class ChoicePage extends StatefulWidget {
   final int buildingID;
   final int doctorID;
@@ -90,18 +91,13 @@ class _ChoicePageState extends State<ChoicePage> {
                         margin: const EdgeInsets.all(10),
                         child: ElevatedButton(
                           onPressed: () async {
-                            print(item.buildingName);
-                            print(_lat);
                             await _getLatLong(item.buildingName);
-                            print(_lat);
-                            if (true) {
-                              Navigator.push(
-                                context,
+                              Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) => FavoriteMapPage(
-                                        lat: _lat, long: _long)),
+                                  builder: (context) => FavoriteMapPage(lat: _lat, long: _long, buildingId: widget.buildingID,departmentId: widget.departmentID,doctorId: widget.doctorID),
+                                ),
                               );
-                            }
+
                           },
                           child: const Text('Navigate'),
                         ),
@@ -177,10 +173,10 @@ class _ChoicePageState extends State<ChoicePage> {
     });
   }
 
-  Future<void> _getLatLong(String _buildingName) async {
+  Future<void> _getLatLong(String buildingName) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
-        .where('building_name', isEqualTo: _buildingName)
+        .where('building_name', isEqualTo: buildingName)
         .get();
     if (snapshot.size > 0) {
       final data = snapshot.docs[0].data();
@@ -190,10 +186,7 @@ class _ChoicePageState extends State<ChoicePage> {
         _lat = lat;
         _long = long;
       });
-      print('Latitude: $_lat');
-      print('Longitude: $_long');
-    } else {
-      print('No data found for building name: $_buildingName');
+
     }
   }
 }

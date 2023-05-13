@@ -7,6 +7,7 @@ import 'choice_page.dart';
 import 'firestore_collections/Building.dart';
 import 'firestore_collections/Department.dart';
 
+/// This class models the Search page.
 class SearchPage extends StatefulWidget {
   // Callback function
 
@@ -17,24 +18,23 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  bool _acceptedTerms = false;
+
+  @override
   void initState() {
     super.initState();
     // Add a delay before showing the terms dialog button
-    Future.delayed(Duration(seconds: 2), () {
+    /// A pop-up that appears when the app is first opened.
+    Future.delayed(const Duration(seconds: 2), () {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Navigation search'),
-            content: Text('While only one field is required, please provide as much information as possible to help us navigate you.'),
+            title: const Text('Navigation search'),
+            content: const Text('While only one field is required, please provide as much information as possible to help us navigate you.'),
             actions: [
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
-                  setState(() {
-                    _acceptedTerms = true; // Update the accepted terms state
-                  });
                   Navigator.of(context).pop(); // Close the dialog
                 },
               ),
@@ -50,18 +50,17 @@ class _SearchPageState extends State<SearchPage> {
   final CollectionReference doctorsRef =
   FirebaseFirestore.instance.collection('departments');
   List<String> _suggestions = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool _isTextFieldFilled = false;
-  String _doctorName = 'N/A';
-  String _buildingName = 'N/A';
-  String _departmentName = 'N/A';
+
+  final String _departmentName = 'N/A';
 
   int _doctorID = -1;
   int _buildingID = -1;
   int _departmentID = -1;
 
   double _lat = 0.0;
-  int _id = 0;
+
   double _long = 0.0;
 
 
@@ -76,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                 'What is the reason of appointment?',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
-                  textStyle: TextStyle(fontSize: 16),
+                  textStyle: const TextStyle(fontSize: 16),
                 ),
               ),
             ),
@@ -111,7 +110,7 @@ class _SearchPageState extends State<SearchPage> {
                         });
                       },
                       child: Container(
-                        margin: EdgeInsets.only(top: 60),
+                        margin: const EdgeInsets.only(top: 60),
                         height: 100,
                         child: ListView.builder(
                           itemCount: _suggestions.length,
@@ -151,7 +150,7 @@ class _SearchPageState extends State<SearchPage> {
                               'What building are you going to?',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
-                                textStyle: TextStyle(
+                                textStyle: const TextStyle(
                                   fontSize: 16,
                                 ),
                               ),
@@ -205,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
                               'What is the name of the doctor?',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
-                                textStyle: TextStyle(
+                                textStyle: const TextStyle(
                                   fontSize: 16,
                                 ),
                               ),
@@ -239,7 +238,7 @@ class _SearchPageState extends State<SearchPage> {
                                   setState(() {
                                     _doctorID = newValue!;
                                   });
-                                  await _getBuildingId(_doctorID);
+                                  await _getBuildingName(_doctorID);
                                 },
                               );
                             },
@@ -259,7 +258,7 @@ class _SearchPageState extends State<SearchPage> {
                               'What department are you going to?',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
-                                textStyle: TextStyle(
+                                textStyle: const TextStyle(
                                   fontSize: 16,
                                 ),
                               ),
@@ -294,6 +293,7 @@ class _SearchPageState extends State<SearchPage> {
                                   setState(() {
                                     _departmentID = newValue!;
                                   });
+
                                   await _getDepartmentId(_departmentName);
                                 },
                               );
@@ -324,7 +324,7 @@ class _SearchPageState extends State<SearchPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => FavoriteMapPage(lat: _lat, long: _long),
+                                builder: (context) => FavoriteMapPage(lat: _lat, long: _long, buildingId: _buildingID,departmentId: _departmentID,doctorId: _doctorID),
                               ),
                             );
                           }
@@ -341,6 +341,7 @@ class _SearchPageState extends State<SearchPage> {
         ));
   }
 
+  /// Displays a list of keywords for the dynamic search bar from Firestore given the search [query].
   void _getSuggestions(String query) async {
     List<String> suggestions = [];
     QuerySnapshot querySnapshot = await doctorsRef.get();
@@ -362,7 +363,7 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-
+  /// Updates the longitude and latitude variables to specific building's coordinates given its [buildingid].
   Future<void> _getLatLong(int buildingid) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
@@ -376,46 +377,42 @@ class _SearchPageState extends State<SearchPage> {
         _lat = lat;
         _long = long;
       });
-      print('Latitude: $_lat');
-      print('Longitude: $_long');
-    } else {
-      print('No data found for building name: $buildingid');
+
     }
   }
 
-
-
-  Future<void> _getDepartmentId(String _departmentName) async {
+  /// Updates the department id variable to specific building's coordinates given its [departmentName].
+  Future<void> _getDepartmentId(String departmentName) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('departments')
-        .where('department_name', isEqualTo: _departmentName)
+        .where('department_name', isEqualTo: departmentName)
         .get();
     if (snapshot.size > 0) {
       final data = snapshot.docs[0].data();
       final id = data['department_id'].toInt();
       setState(() {
-        _id = id;
+        _departmentID = id;
       });
-      print('Department Id: $_id');
-    } else {
-      print('No data found for department name: $_departmentName');
+
     }
   }
 
-  Future<void> _getBuildingId(int _doctorId) async {
+  /// Updates the building id variable to specific building's coordinates given its [doctorId].
+  Future<void> _getBuildingName(int doctorId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('doctors')
-        .where('doctor_id', isEqualTo: _doctorId)
+        .where('doctor_id', isEqualTo: doctorId)
         .get();
     if (snapshot.size > 0) {
       final data = snapshot.docs[0].data();
       final buildingName = data['building'].toString();
-      print(buildingName);
-      await _getBuildingName(buildingName); // Pass buildingName as the parameter
+
+      await _getBuildingId(buildingName); // Pass buildingName as the parameter
     }
   }
 
-  Future<void> _getBuildingName(String buildingName) async { // Change the parameter name
+  /// Updates the building name variable to specific building's coordinates given its [_doctorId].
+  Future<void> _getBuildingId(String buildingName) async { // Change the parameter name
     final snapshot = await FirebaseFirestore.instance
         .collection('buildings')
         .where('building_name', isEqualTo: buildingName) // Use the parameter
@@ -426,9 +423,7 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         _buildingID = id;
       });
-      print('Building Id: $_buildingID');
-    } else {
-      print('No data found for building name: $buildingName'); // Use the parameter
+
     }
     await _getLatLong(_buildingID);
   }
@@ -444,9 +439,7 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         _departmentID = id;
       });
-      print('Department Id: $_departmentID');
-    } else {
-      print('No data found for building name: $_departmentID'); // Use the parameter
+
     }
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,8 +12,11 @@ import 'search_page.dart';
 class FavoriteMapPage extends StatefulWidget {
   final double lat;
   final double long;
+  final int buildingId;
+  final int departmentId;
+  final int doctorId;
 
-  const FavoriteMapPage({super.key, required this.lat, required this.long});
+  const FavoriteMapPage({super.key, required this.lat, required this.long, required this.buildingId, required this.departmentId, required this.doctorId});
 
   @override
   State<FavoriteMapPage> createState() => _FavoriteMapPageState();
@@ -38,18 +42,32 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   late final MapController _mapController;
   double targetLat = 42.2775;
   double targetLong = -71.7617;
+  String buildingName = "N/A";
+  String doctorName = "N/A";
+  String floorName = "N/A";
   bool showMarker = false;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     _mapController = MapController();
+    _fetchData();
   }
 
   void _toggleImageVisibility() {
     setState(() {
       _isImageVisible = !_isImageVisible;
     });
+  }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    await _getDoctorName(widget.doctorId);
+    await _getFloorName(widget.doctorId);
+    await _getBuildingName(widget.buildingId);
   }
 
   // builds the map
@@ -74,15 +92,17 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
             latlong2.LatLng(location.latitude, location.longitude))
         .toList());
 
-    const padding = 10.0;
+    const padding = 13.0;
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-            "Inputted: <building name>, <doctor name>\nHead to floor <Floor #>",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18)),
+        title: Expanded(
+          child: Text(
+              ('Building: $buildingName , Doctor: $doctorName, Floor: $floorName') ,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 10)),
+        ),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
@@ -276,4 +296,50 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   Color _determineButtonColor() {
     return _isListening() ? Colors.green : Colors.red;
   }
+
+  Future<void> _getDoctorName(int doctorId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('doctors')
+        .where('doctor_id', isEqualTo: doctorId)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final firstName = data['first_name'].toString();
+      final lastName = data['last_name'].toString();
+      setState(() {
+        doctorName = firstName + ' ' + lastName;
+      });
+
+    }
+  }
+
+  Future<void> _getBuildingName(int buildingId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('buildings')
+        .where('building_id', isEqualTo: buildingId)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final building = data['building_name'].toString();
+      setState(() {
+        buildingName = building;
+      });
+    }
+  }
+
+  Future<void> _getFloorName(int doctorId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('doctors')
+        .where('doctor_id', isEqualTo: doctorId)
+        .get();
+    if (snapshot.size > 0) {
+      final data = snapshot.docs[0].data();
+      final floor = data['floor'].toString();
+      setState(() {
+        floorName = floor;
+      });
+    }
+  }
+
+
 }
