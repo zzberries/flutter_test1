@@ -77,22 +77,12 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
   Widget _buildMap(BuildContext context) {
 
     _getCurrentPosition();
-    double? lat =
-        42.27507; // south road parking garage is the default target location
-    double? lng = -71.76205;
-
-    /// Checks if current location was updated and if so, updates lat and long accordingly
-    if (currentLat != 0) {
-      lat = currentLat;
-      lng = currentLong;
-    }
-
-    final coordinates = [LatLng(lat, lng)];
+    final coordinates = [LatLng(targetLat, targetLong)];
 
     /// Calculates the bounds for the default orientation/location of the map
     final bounds = LatLngBounds.fromPoints(coordinates
         .map((location) =>
-            latlong2.LatLng(location.latitude, location.longitude))
+            latlong2.LatLng(widget.lat, widget.long))
         .toList());
 
     const padding = 13.0;
