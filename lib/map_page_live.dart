@@ -11,6 +11,16 @@ import 'package:latlong2/latlong.dart' as latlong2;
 
 import 'search_page.dart';
 
+/// Utilizes examples from:
+///   https://pub.dev/documentation/flutter_map/latest/flutter_map.plugin_api/MarkerLayer-class.html
+///   https://www.fluttercampus.com/guide/212/get-gps-location/
+///   https://pub.dev/documentation/geolocator_platform_interface/latest/geolocator_platform_interface/GeolocatorPlatform/getCurrentPosition.html
+///   https://blog.logrocket.com/flutter-floatingactionbutton-a-complete-tutorial-with-examples/
+///   https://stackoverflow.com/questions/50839282/how-to-add-multiple-floating-button-in-stack-widget-in-flutter
+///   https://pub.dev/documentation/map_controller/latest/
+///   https://pub.dev/packages/permission_handler/example
+///   https://pub.dev/packages/flutter_map_location_marker
+
 /// This class models the map page where users can view where they are and where their destination is.
 class FavoriteMapPage extends StatefulWidget {
   final double lat;

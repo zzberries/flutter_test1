@@ -4,6 +4,8 @@ import 'announcement_page.dart';
 import 'search_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
+/// Utilizes code from: https://blog.logrocket.com/creating-multi-page-app-flutter/
 /// This class models the navigation bar that allows the user to navigate between the [SearchPage] and the [AnnouncementsPage].
 class Navbar extends StatefulWidget {
   const Navbar({Key? key, required this.title}) : super(key: key);
