@@ -156,11 +156,11 @@ class _FavoriteMapPageState extends State<FavoriteMapPage> {
                             markers: [
                               Marker(
                                 point: latlong2.LatLng(widget.lat, widget.long),
-                                width: 100,
-                                height: 100,
+                                width: 200,
+                                height: 200,
                                 builder: (context) => const Icon(
                                   Icons.star,
-                                  color: Colors.blue,
+                                  color: Colors.red,
                                 ),
                               ),
                             ],
